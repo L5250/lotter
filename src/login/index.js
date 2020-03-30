@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Form, Input, Button, Checkbox } from 'antd'
+import { Form, Input, Button, Checkbox,message } from 'antd'
+import axios from 'axios';
 import './index.css'
 
 const layout = {
@@ -13,13 +14,40 @@ const tailLayout = {
 
 
 export default class Login extends Component {
+    state = {
+
+    }
     onFinish = values => {
         console.log('Success:', values);
+        const _this = this;
+        axios.get('https://5b5e71c98e9f160014b88cc9.mockapi.io/api/v1/lists')
+            .then(function (res) {
+                if (res.code === 0) {
+                    // Cookie.addCookie("user", res.data.token, 0)
+                    // document.cookie = "user=" + res.data.token
+                    this.setState({
+                        Login: true
+                    });
+                    window.location.href = '/'
+                } else {
+                    return message.warning("账号密码错误")
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+                _this.setState({
+                    isLoaded: false,
+                    error: error
+                })
+            })
     };
 
     onFinishFailed = errorInfo => {
         console.log('Failed:', errorInfo);
     };
+    onSubmit = () => {
+        console.log(1);
+    }
     render() {
         return (
             <div className="login">
@@ -46,12 +74,12 @@ export default class Login extends Component {
                         <Input.Password />
                     </Form.Item>
 
-                    <Form.Item {...tailLayout} name="remember" valuePropName="checked">
+                    {/* <Form.Item {...tailLayout} name="remember" valuePropName="checked">
                         <Checkbox>记住我</Checkbox>
-                    </Form.Item>
+                    </Form.Item> */}
 
-                    <Form.Item {...tailLayout} >
-                        <Button type="primary" htmlType="submit">登录</Button>
+                    <Form.Item style={{ textAlign: "center" }} >
+                        <Button type="primary" onClick={this.onSubmit} htmlType="submit">登录</Button>
                     </Form.Item>
                 </Form>
             </div>

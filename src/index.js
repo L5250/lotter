@@ -8,11 +8,10 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <React.StrictMode>
-    {/* <App /> */}
-    {/* <Login/> */}
-    <RouterLink />
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <RouterLink />
+  // </React.StrictMode>
+  ,
   document.getElementById('root')
 );
 
