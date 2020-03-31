@@ -6,19 +6,30 @@ import './index.scss'
 const { Option } = Select;
 const { Header, Footer, Sider, Content } = Layout;
 class Trend extends Component {
-    // constructor() {
-    //     super();
-    //     this.canvas = React.createRef();
-    // }
+    constructor(props) {
+        super(props);
+        this.tableRef = React.createRef();
+    }
     componentDidMount() {
         this.updateCanvas();
+        console.log(this.refs);
+        let rectObject = this.refs.canvas.getBoundingClientRect();
+        console.log(rectObject);
+
     }
 
     updateCanvas() {
         const ctx = this.refs.canvas.getContext('2d');
-        ctx.fillRect(0, 0, 100, 100);
-    }
+        ctx.moveTo(0, 0);
+        ctx.lineTo(100, 90);
+        ctx.lineTo(20, 90);
 
+        ctx.stroke();
+    }
+    click=(e)=>{
+console.log(e);
+// console.log(e.getBoundingClientRect());
+    }
     render() {
         const posation = ["万位", "千位", "百位", "十位", "个位", "大小单双"]
         const other = ["五星走势", "五星综合", "大小", "单双", "龙虎"]
@@ -51,7 +62,15 @@ class Trend extends Component {
                 children: [
                     {
                         title: '0',
-                        dataIndex: 'age',
+                        dataIndex: 'qq',
+                        render: (text, record, index,e) => {
+                            console.log(text,record,index,e);
+
+                            return (
+                                <div onClick={(e)=>this.click(e)}>{text}</div>
+
+                            )
+                        }
                     },
                     {
                         title: '1',
@@ -100,6 +119,7 @@ class Trend extends Component {
                     {
                         title: "大",
                         dataIndex: "",
+                        ref: 'big'
                     },
                     {
                         title: "小",
@@ -286,11 +306,13 @@ class Trend extends Component {
                             <Table
                                 columns={columns}
                                 className="list"
-                                style={{ width: "100%" ,position:"absolute"}}
+                                // style={{ width: "100%", position: "absolute" }}
                                 bordered
-                            // size={"small"}
+                                dataSource={[{ qq: 1, b: 2, c: 3, age: 7 }]}
                             />
-                            <div style={{ width: "100%" ,position:"absolute"}} >
+                            <div
+                            // style={{ width: "100%", position: "absolute" }} 
+                            >
                                 <canvas ref="canvas" width="200" height="100"
                                     style={{ border: "1px solid #000000", position: "absolute" }}>
                                     您的浏览器不支持 HTML5 canvas 标签。
