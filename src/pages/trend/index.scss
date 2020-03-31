@@ -1,0 +1,35 @@
+.main {
+    /* padding:10px 0; */
+    max-width: 75rem;
+    /* width: 75rem; */
+    margin: 0 auto;
+    height: 100%;
+
+    .header {
+        background: #fff;
+        height: 40px;
+    }
+
+    .prizeBall {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #3b81cd;
+        margin: 10px 5px;
+        line-height: 20px;
+        text-align: center;
+        color: #fff;
+    }
+
+    .canvasTable {
+        position: relative;
+        width: 100%;
+    }
+
+    .list {
+        th {
+            padding: 0 5px !important;
+            text-align: center !important;
+        }
+    }
+}

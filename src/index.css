@@ -7,11 +7,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
 }
-#root{
+
+#root {
   height: 100%;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.list th {
+  padding: 0;
 }
