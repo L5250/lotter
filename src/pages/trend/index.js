@@ -6,230 +6,342 @@ import './index.scss'
 const { Option } = Select;
 const { Header, Footer, Sider, Content } = Layout;
 class Trend extends Component {
-    constructor(props) {
-        super(props);
-        this.tableRef = React.createRef();
+    // constructor(props) {
+    //     super(props);
+    //     this.tableRef = React.createRef();
+    // }
+    state = {
+        bitPosition: [],
+        lineParams: [],
     }
     componentDidMount() {
-        this.updateCanvas();
         console.log(this.refs);
         let rectObject = this.refs.canvas.getBoundingClientRect();
         console.log(rectObject);
+        // this.updateCanvas();
+
+        this.createLine()
 
     }
 
     updateCanvas() {
         const ctx = this.refs.canvas.getContext('2d');
+        const ctx0 = this.refs.bitCanvas0.getContext('2d');
+        const { lineParams } = this.state
+        for (let i = 0; i < lineParams.length; i++) {
+            let ctxNo = ctx + i
+            // let ctxCan = bitCanvas + i
+            // const ctxNo = this.refs.ctxCan.getContext('2d');
+
+            ctxNo.moveTo(0, 0);
+            ctxNo.lineTo(lineParams.lineToX, lineParams.lineToY);
+        }
+
         ctx.moveTo(0, 0);
         ctx.lineTo(100, 90);
         ctx.lineTo(20, 90);
 
         ctx.stroke();
     }
-    click=(e)=>{
-console.log(e);
-// console.log(e.getBoundingClientRect());
+
+    createLine = () => {
+        let bitIds0 = document.getElementsByClassName("Bit0")
+        let bitIds1 = document.getElementsByClassName("Bit1")
+        let bitIds2 = document.getElementsByClassName("Bit2")
+        let bitIds3 = document.getElementsByClassName("Bit3")
+        let bitIds4 = document.getElementsByClassName("Bit4")
+        let bitIds5 = document.getElementsByClassName("Bit5")
+        let bitIds6 = document.getElementsByClassName("Bit6")
+        let bitIds7 = document.getElementsByClassName("Bit7")
+        let bitIds8 = document.getElementsByClassName("Bit8")
+        let bitIds9 = document.getElementsByClassName("Bit9")
+        // let childWidth = ids.offsetWidth;
+        console.log(bitIds0);
+        let bitPosition = []
+        for (let i = 1; i < bitIds0.length; i++) {
+            if (bitIds0[i].innerText) {
+                bitPosition.push(bitIds0[i].getBoundingClientRect())
+            }
+        }
+
+        for (let i = 1; i < bitIds1.length; i++) {
+            if (bitIds1[i].innerText) {
+                bitPosition.push(bitIds1[i].getBoundingClientRect())
+            }
+        }
+        for (let i = 1; i < bitIds2.length; i++) {
+            if (bitIds2[i].innerText) {
+                bitPosition.push(bitIds2[i].getBoundingClientRect())
+            }
+        }
+        for (let i = 1; i < bitIds3.length; i++) {
+            if (bitIds3[i].innerText) {
+                bitPosition.push(bitIds3[i].getBoundingClientRect())
+            }
+        }
+        for (let i = 1; i < bitIds4.length; i++) {
+            if (bitIds4[i].innerText) {
+                bitPosition.push(bitIds4[i].getBoundingClientRect())
+            }
+        }
+        for (let i = 1; i < bitIds5.length; i++) {
+            if (bitIds5[i].innerText) {
+                bitPosition.push(bitIds5[i].getBoundingClientRect())
+            }
+        }
+        for (let i = 1; i < bitIds6.length; i++) {
+            if (bitIds6[i].innerText) {
+                bitPosition.push(bitIds6[i].getBoundingClientRect())
+            }
+        }
+        for (let i = 1; i < bitIds7.length; i++) {
+            if (bitIds7[i].innerText) {
+                bitPosition.push(bitIds7[i].getBoundingClientRect())
+            }
+        }
+        for (let i = 1; i < bitIds8.length; i++) {
+            if (bitIds8[i].innerText) {
+                bitPosition.push(bitIds8[i].getBoundingClientRect())
+            }
+        }
+        for (let i = 1; i < bitIds9.length; i++) {
+            if (bitIds9[i].innerText) {
+                bitPosition.push(bitIds9[i].getBoundingClientRect())
+            }
+        }
+
+        // console.log(childWidth);
+
+        let lineParams = []
+        for (let i = 0; i < bitPosition.length; i++) {
+            for (let j = 1; j < bitPosition.length; j++) {
+                lineParams.push(
+                    {
+                        width: Math.abs(bitPosition[i].x - bitPosition[j].x),
+                        height: Math.abs(bitPosition[i].y - bitPosition[j].y),
+                        left: bitPosition[i].x + bitPosition[i].width / 2,
+                        top: bitPosition[i].y + bitPosition[i].height / 2,
+                        lineToX: bitPosition[j].x,
+                        lineToY: bitPosition[j].y,
+                    }
+                )
+            }
+        }
+
+        console.log(lineParams);
+        this.setState({
+            bitPosition,
+            lineParams,
+        })
+
     }
+
+    columns = [
+        {
+            title: "期号",
+            dataIndex: "",
+            // width: "40px"
+        },
+        {
+            title: "奖号",
+            dataIndex: "",
+            // width: "10%"
+        },
+        {
+            title: "和值",
+            dataIndex: "",
+            // width: "10%"
+        },
+        {
+            title: "跨度",
+            dataIndex: "",
+            // width: "10%"
+        },
+        {
+            title: "个位",
+            dataIndex: "",
+            width: "10%",
+            padding: 0,
+            children: [
+                {
+                    title: '0',
+                    dataIndex: 'qq',
+                    className: "Bit0",
+                    // render: (text, record, index, e) => {
+                    //     return (
+                    //         <div  onClick={e => this.getXY(e)}>{text}</div>
+                    //     )
+                    // },
+                },
+                {
+                    title: '1',
+                    dataIndex: 'e',
+                    className: "Bit1",
+                },
+                {
+                    title: '2',
+                    dataIndex: 'e',
+                    className: "Bit2",
+                },
+                {
+                    title: '3',
+                    dataIndex: 'w',
+                    className: "Bit3",
+                },
+                {
+                    title: '4',
+                    dataIndex: 'wqq',
+                    className: "Bit4",
+                },
+                {
+                    title: '5',
+                    dataIndex: 'df',
+                    className: "Bit5",
+                },
+                {
+                    title: '6',
+                    dataIndex: 'df',
+                    className: "Bit6",
+                },
+                {
+                    title: '7',
+                    dataIndex: 'fd',
+                    className: "Bit7",
+                },
+                {
+                    title: '8',
+                    dataIndex: 'dff',
+                    className: "Bit8",
+                },
+                {
+                    title: '9',
+                    dataIndex: 'fff',
+                    className: "Bit9",
+                },
+
+            ]
+        },
+        {
+            title: "个位形态分布",
+            dataIndex: "",
+            width: "10%",
+            children: [
+                {
+                    title: "大",
+                    dataIndex: "",
+                },
+                {
+                    title: "小",
+                    dataIndex: "",
+                },
+                {
+                    title: "奇",
+                    dataIndex: "",
+                },
+                {
+                    title: "偶",
+                    dataIndex: "",
+                },
+                {
+                    title: "质",
+                    dataIndex: "",
+                },
+                {
+                    title: "和",
+                    dataIndex: "",
+                },
+            ]
+        },
+        {
+            title: "个位012路",
+            dataIndex: "",
+            width: "10%",
+            children: [
+                {
+                    title: "0",
+                    dataIndex: "",
+                },
+                {
+                    title: "1",
+                    dataIndex: "",
+                },
+                {
+                    title: "2",
+                    dataIndex: "",
+                },
+            ]
+        },
+        {
+            title: "个位",
+            dataIndex: "",
+            width: "10%",
+            children: [
+                {
+                    title: "升",
+                    dataIndex: "",
+                },
+                {
+                    title: "平",
+                    dataIndex: "",
+                },
+                {
+                    title: "降",
+                    dataIndex: "",
+                },
+            ]
+        },
+        {
+            title: "个位振幅",
+            dataIndex: "",
+            width: "10%",
+            children: [
+                {
+                    title: '0',
+                    dataIndex: 'age',
+                },
+                {
+                    title: '1',
+                    dataIndex: 'age',
+                },
+                {
+                    title: '2',
+                    dataIndex: 'age',
+                },
+                {
+                    title: '3',
+                    dataIndex: 'age',
+                },
+                {
+                    title: '4',
+                    dataIndex: 'age',
+                },
+                {
+                    title: '5',
+                    dataIndex: 'age',
+                },
+                {
+                    title: '6',
+                    dataIndex: 'age',
+                },
+                {
+                    title: '7',
+                    dataIndex: 'age',
+                },
+                {
+                    title: '8',
+                    dataIndex: 'age',
+                },
+                {
+                    title: '9',
+                    dataIndex: 'age',
+                },
+
+            ]
+        },
+    ]
     render() {
-        const posation = ["万位", "千位", "百位", "十位", "个位", "大小单双"]
-        const other = ["五星走势", "五星综合", "大小", "单双", "龙虎"]
-        const columns = [
-            {
-                title: "期号",
-                dataIndex: "",
-                // width: "40px"
-            },
-            {
-                title: "奖号",
-                dataIndex: "",
-                // width: "10%"
-            },
-            {
-                title: "和值",
-                dataIndex: "",
-                // width: "10%"
-            },
-            {
-                title: "跨度",
-                dataIndex: "",
-                // width: "10%"
-            },
-            {
-                title: "个位",
-                dataIndex: "",
-                width: "10%",
-                padding: 0,
-                children: [
-                    {
-                        title: '0',
-                        dataIndex: 'qq',
-                        render: (text, record, index,e) => {
-                            console.log(text,record,index,e);
-
-                            return (
-                                <div onClick={(e)=>this.click(e)}>{text}</div>
-
-                            )
-                        }
-                    },
-                    {
-                        title: '1',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '2',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '3',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '4',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '5',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '6',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '7',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '8',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '9',
-                        dataIndex: 'age',
-                    },
-
-                ]
-            },
-            {
-                title: "个位形态分布",
-                dataIndex: "",
-                width: "10%",
-                children: [
-                    {
-                        title: "大",
-                        dataIndex: "",
-                        ref: 'big'
-                    },
-                    {
-                        title: "小",
-                        dataIndex: "",
-                    },
-                    {
-                        title: "奇",
-                        dataIndex: "",
-                    },
-                    {
-                        title: "偶",
-                        dataIndex: "",
-                    },
-                    {
-                        title: "质",
-                        dataIndex: "",
-                    },
-                    {
-                        title: "和",
-                        dataIndex: "",
-                    },
-                ]
-            },
-            {
-                title: "个位012路",
-                dataIndex: "",
-                width: "10%",
-                children: [
-                    {
-                        title: "0",
-                        dataIndex: "",
-                    },
-                    {
-                        title: "1",
-                        dataIndex: "",
-                    },
-                    {
-                        title: "2",
-                        dataIndex: "",
-                    },
-                ]
-            },
-            {
-                title: "个位",
-                dataIndex: "",
-                width: "10%",
-                children: [
-                    {
-                        title: "升",
-                        dataIndex: "",
-                    },
-                    {
-                        title: "平",
-                        dataIndex: "",
-                    },
-                    {
-                        title: "降",
-                        dataIndex: "",
-                    },
-                ]
-            },
-            {
-                title: "个位振幅",
-                dataIndex: "",
-                width: "10%",
-                children: [
-                    {
-                        title: '0',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '1',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '2',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '3',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '4',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '5',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '6',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '7',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '8',
-                        dataIndex: 'age',
-                    },
-                    {
-                        title: '9',
-                        dataIndex: 'age',
-                    },
-
-                ]
-            },
-        ]
+        const { bitPosition, lineParams } = this.state
+        console.log(bitPosition);
         return (
             <div className="main">
                 <Layout style={{ height: "100%" }}>
@@ -276,48 +388,43 @@ console.log(e);
                         <div style={{ padding: "0 10px" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", height: "40px", lineHeight: "40px" }}>
                                 <div>定位</div>
-                                <a href="">万位</a>
+                                <a href="#:javascript">万位</a>
                                 <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
-                                <a href="">千位</a>
+                                <a href="#:javascript">千位</a>
                                 <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
-                                <a href="">百位</a>
+                                <a href="#:javascript">百位</a>
                                 <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
-                                <a href="">十位</a>
+                                <a href="#:javascript">十位</a>
                                 <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
-                                <a href="">个位</a>
+                                <a href="#:javascript">个位</a>
                                 <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
-                                <a href="">大小单双</a>
+                                <a href="#:javascript">大小单双</a>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between", height: "40px", lineHeight: "40px" }}>
                                 <div>其他</div>
-                                <a href="">五星走势</a>
+                                <a href="#:javascript">五星走势</a>
                                 <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
-                                <a href="">五星综合</a>
+                                <a href="#:javascript">五星综合</a>
                                 <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
-                                <a href="">大小</a>
+                                <a href="#:javascript">大小</a>
                                 <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
-                                <a href="">单双</a>
+                                <a href="#:javascript">单双</a>
                                 <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
-                                <a href="">龙虎</a>
+                                <a href="#:javascript">龙虎</a>
                             </div>
                         </div>
                         <div className="canvasTable">
 
                             <Table
-                                columns={columns}
+                                columns={this.columns}
                                 className="list"
                                 // style={{ width: "100%", position: "absolute" }}
+                                rowKey={"qq"}
                                 bordered
-                                dataSource={[{ qq: 1, b: 2, c: 3, age: 7 }]}
+                                pagination={false}
+                                dataSource={[{ qq: 1, b: 2, c: 3, age: 7 }, { wqq: 11, b: 22, c: 33, age: 27 }]}
                             />
-                            <div
-                            // style={{ width: "100%", position: "absolute" }} 
-                            >
-                                <canvas ref="canvas" width="200" height="100"
-                                    style={{ border: "1px solid #000000", position: "absolute" }}>
-                                    您的浏览器不支持 HTML5 canvas 标签。
-                                    </canvas>
-                            </div>
+
 
                         </div>
 
@@ -325,6 +432,25 @@ console.log(e);
                     {/* <Footer>
 
                     </Footer> */}
+                    <div
+                        style={{ width: "100%", position: "absolute" }}
+                        ref="div"
+                    >
+                        {
+                            lineParams.map((item, index) => {
+                                return (
+                                    <canvas key={index} ref={"bitCanvas" + index} width={item.width} height={item.height}
+                                        style={{ background: "#ccc", position: "absolute", left: item.left, top: item.top }}
+                                    ></canvas>
+                                )
+                            })
+                        }
+                        <canvas ref="canvas"
+                            width="200" height="100"
+                        // style={{ border: "1px solid #000000", position: "absolute" }}
+                        > 您的浏览器不支持 HTML5 canvas 标签。</canvas>
+
+                    </div>
                 </Layout>
             </div>
         );
