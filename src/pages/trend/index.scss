@@ -4,21 +4,22 @@
     /* width: 75rem; */
     margin: 0 auto;
     height: 100%;
-    width: 100%;
+    width: 980px;
     position: relative;
+    font-size: xx-large;
 
     .header {
         background: #fff;
-        height: 40px;
+        height: 100px;
     }
 
     .prizeBall {
-        width: 20px;
-        height: 20px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
         background: #3b81cd;
-        margin: 10px 5px;
-        line-height: 20px;
+        margin: 25px 20px;
+        line-height: 50px;
         text-align: center;
         color: #fff;
     }
@@ -26,6 +27,7 @@
     .canvasTable {
         position: relative;
         width: 100%;
+        margin-top:30px;
     }
 
     .list {
@@ -33,9 +35,11 @@
             padding: 5px !important;
             text-align: center !important;
         }
-        td{
+
+        td {
             padding: 5px !important;
             text-align: center !important;
+            font-size: 5px !important;
         }
     }
 }

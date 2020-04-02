@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { addCount, reduceCount } from '../../store/actions/countAction';
 import { Layout, Button, Select, Table, Divider } from 'antd';
 import { UserOutlined, CaretDownOutlined, SearchOutlined } from '@ant-design/icons'
 import './index.scss'
@@ -6,15 +8,17 @@ import './index.scss'
 const { Option } = Select;
 const { Header, Footer, Sider, Content } = Layout;
 class Trend extends Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.tableRef = React.createRef();
-    // }
+    constructor(props) {
+        super(props);
+        this.tableRef = React.createRef();
+    }
     state = {
-        bitPosition: [],
-        lineParams: [],
+        bitPosition: [],//折线1绝对定位
+        lineParams: [],//画布参数
     }
     componentDidMount() {
+        console.log(this.props);
+
         console.log(this.refs);
         let rectObject = this.refs.canvas.getBoundingClientRect();
         console.log(rectObject);
@@ -136,31 +140,49 @@ class Trend extends Component {
 
     }
 
+    createCanvas = () => {
+        const { lineParams } = this.state
+        lineParams.map((item, index) => {
+            return (
+                <canvas key={index} ref={"bitCanvas" + index} width={item.width} height={item.height}
+                    style={{ background: "#ccc", position: "absolute", left: item.left, top: item.top }}
+                ></canvas>
+            )
+        })
+    }
+
+    search = () => {
+        console.log(this.props);
+        this.props.setStateData({
+            a: 3
+        })
+    }
+
     columns = [
         {
             title: "期号",
-            dataIndex: "",
-            // width: "40px"
+            dataIndex: "ti",
+            // width: "78px"
         },
         {
             title: "奖号",
             dataIndex: "",
-            // width: "10%"
+            // width: "57px"
         },
         {
             title: "和值",
             dataIndex: "",
-            // width: "10%"
+            // width: "40px"
         },
         {
             title: "跨度",
             dataIndex: "",
-            // width: "10%"
+            // width: "40px"
         },
         {
             title: "个位",
             dataIndex: "",
-            width: "10%",
+            // width: "241px",
             padding: 0,
             children: [
                 {
@@ -224,7 +246,7 @@ class Trend extends Component {
         {
             title: "个位形态分布",
             dataIndex: "",
-            width: "10%",
+            // width: "146px",
             children: [
                 {
                     title: "大",
@@ -255,7 +277,7 @@ class Trend extends Component {
         {
             title: "个位012路",
             dataIndex: "",
-            width: "10%",
+            // width: "72px",
             children: [
                 {
                     title: "0",
@@ -274,7 +296,7 @@ class Trend extends Component {
         {
             title: "个位",
             dataIndex: "",
-            width: "10%",
+            // width: "72px",
             children: [
                 {
                     title: "升",
@@ -293,7 +315,7 @@ class Trend extends Component {
         {
             title: "个位振幅",
             dataIndex: "",
-            width: "10%",
+            // width: "10%",
             children: [
                 {
                     title: '0',
@@ -345,29 +367,33 @@ class Trend extends Component {
         return (
             <div className="main">
                 <Layout style={{ height: "100%" }}>
-                    <div style={{ background: "#5757b1", height: "52px", padding: "10px 0", display: "flex", justifyContent: "space-between" }}>
-                        <Button ghost type="link">
-                            <UserOutlined color="#fff" />
+                    <div style={{ background: "#5757b1", height: "100px", padding: "0", display: "flex", justifyContent: "space-between" }}>
+                        <Button ghost type="link" style={{ width: "100px", height: "100%" }}>
+                            <UserOutlined color="#fff" style={{ fontSize: "xx-large", lineHeight: "" }} />
 
                         </Button>
-                        <div>
-                            <Select defaultValue="1"
+                        <div style={{ margin: "auto 0" }}>
+                            <Select
+                                defaultValue="1"
+                                dropdownStyle={{ fontSize: "large" }}
                                 // suffixIcon={<CaretDownOutlined color="#fff" />}
-                                style={{ color: "#fff", fontSize: "large" }} bordered={false}>
+                                size="large"
+                                style={{ color: "#fff", fontSize: "xx-large", height: "50px", }} bordered={false}
+                            >
                                 <Option value="1">腾讯十分彩</Option>
                             </Select>
                         </div>
                         <div>
-                            <Button ghost size="small">计划</Button>
-                            <Button ghost type="link">
-                                <SearchOutlined color="#fff" />
+                            <Button ghost size="large" style={{ width: "100px", height: "50px" }}>计划</Button>
+                            <Button ghost type="link" style={{ width: "100px", height: "100%" }} onClick={this.search}>
+                                <SearchOutlined color="#fff" style={{ fontSize: "xx-large", lineHeight: "" }} />
 
                             </Button>
                         </div>
                     </div>
-                    <Content style={{ padding: "0 10px" }}>
-                        <div style={{ height: "40px", lineHeight: "40px" }}>
-                            <span style={{ fontSize: "large" }}>第
+                    <Content style={{ padding: "" }}>
+                        <div style={{ height: "100px", lineHeight: "100px", padding: "0 50px" }}>
+                            <span style={{}}>第
                             <span>{111}</span>
                              期
                              </span>
@@ -376,7 +402,7 @@ class Trend extends Component {
                             </span>
                         </div>
                         <Divider style={{ margin: "5px 0", background: "#ccc" }} />
-                        <div style={{ height: "40px", lineHeight: "40px", display: "flex" }}>
+                        <div style={{ height: "100px", lineHeight: "100px", display: "flex", padding: "0 40px" }}>
                             <div>第{1}期结果</div>
                             <div className="prizeBall">1</div>
                             <div className="prizeBall">1</div>
@@ -385,31 +411,31 @@ class Trend extends Component {
                             <div>开奖时间：</div>
                         </div>
 
-                        <div style={{ padding: "0 10px" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", height: "40px", lineHeight: "40px" }}>
+                        <div style={{ padding: "0 40px" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", height: "80px", lineHeight: "80px" }}>
                                 <div>定位</div>
                                 <a href="#:javascript">万位</a>
-                                <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
+                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
                                 <a href="#:javascript">千位</a>
-                                <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
+                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
                                 <a href="#:javascript">百位</a>
-                                <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
+                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
                                 <a href="#:javascript">十位</a>
-                                <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
+                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
                                 <a href="#:javascript">个位</a>
-                                <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
+                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
                                 <a href="#:javascript">大小单双</a>
                             </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", height: "40px", lineHeight: "40px" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", height: "80px", lineHeight: "80px" }}>
                                 <div>其他</div>
                                 <a href="#:javascript">五星走势</a>
-                                <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
+                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
                                 <a href="#:javascript">五星综合</a>
-                                <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
+                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
                                 <a href="#:javascript">大小</a>
-                                <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
+                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
                                 <a href="#:javascript">单双</a>
-                                <Divider type="vertical" style={{ margin: "5px 0", background: "#ccc" }} />
+                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
                                 <a href="#:javascript">龙虎</a>
                             </div>
                         </div>
@@ -422,7 +448,8 @@ class Trend extends Component {
                                 rowKey={"qq"}
                                 bordered
                                 pagination={false}
-                                dataSource={[{ qq: 1, b: 2, c: 3, age: 7 }, { wqq: 11, b: 22, c: 33, age: 27 }]}
+                                // size="small"
+                                dataSource={[{ ti: "12345-222", qq: 1, b: 2, c: 3, age: 7 }, { wqq: 11, b: 22, c: 33, age: 27 }]}
                             />
 
 
@@ -433,17 +460,11 @@ class Trend extends Component {
 
                     </Footer> */}
                     <div
-                        style={{ width: "100%", position: "absolute" }}
-                        ref="div"
+                        // style={{ width: "100%", position: "absolute" }}
+                        ref={this.tableRef}
                     >
                         {
-                            lineParams.map((item, index) => {
-                                return (
-                                    <canvas key={index} ref={"bitCanvas" + index} width={item.width} height={item.height}
-                                        style={{ background: "#ccc", position: "absolute", left: item.left, top: item.top }}
-                                    ></canvas>
-                                )
-                            })
+                            this.createCanvas
                         }
                         <canvas ref="canvas"
                             width="200" height="100"
@@ -457,4 +478,19 @@ class Trend extends Component {
     }
 }
 
-export default Trend;
+//需要渲染什么数据
+function mapStateToProps(state) {
+    return {
+        count: state.countReducer.count
+    }
+}
+
+//需要触发什么行为
+function mapActionToProps(dispatch) {
+    return {
+        addCount: () => dispatch(addCount()),
+        reduceCount: (num) => dispatch(reduceCount(num))
+    }
+}
+
+export default connect(mapStateToProps, mapActionToProps)(Trend)
