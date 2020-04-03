@@ -1,5 +1,9 @@
-.login{
-    padding:10px;
+.login {
+    padding: 10px;
     max-width: 500px;
-    margin: 0 auto;
+    transform: scale(2); 
+    transform-origin: 0 0;
+    height: calc(100% - 853px);
+    padding: 80px 20px;
+    /* background:beige; */
 }

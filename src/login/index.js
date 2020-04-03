@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
-import { Form, Input, Button, Checkbox,message } from 'antd'
+import { Form, Input, Button, Checkbox, message } from 'antd'
 import axios from 'axios';
+// import { post } from '../../util/axios'
+// import cookie from 'react-cookies'
 import './index.css'
 
 const layout = {
@@ -17,29 +19,25 @@ export default class Login extends Component {
     state = {
 
     }
+    componentDidMount() {
+     
+    }
     onFinish = values => {
         console.log('Success:', values);
-        const _this = this;
-        axios.get('https://5b5e71c98e9f160014b88cc9.mockapi.io/api/v1/lists')
-            .then(function (res) {
-                if (res.code === 0) {
-                    // Cookie.addCookie("user", res.data.token, 0)
-                    // document.cookie = "user=" + res.data.token
-                    this.setState({
-                        Login: true
-                    });
-                    window.location.href = '/'
-                } else {
-                    return message.warning("账号密码错误")
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-                _this.setState({
-                    isLoaded: false,
-                    error: error
-                })
-            })
+        // window.location.href = "/"
+        // localStorage.setItem("token",111)
+        axios.post(`http://cp.f293.cn/api/login/login`, values)
+        .then(res => {
+            if (res.data.code === 200) {
+                message.success(res.data.msg)
+                console.log('res=>', res);
+                // cookie.save('userId', 1)
+                window.location.href="/"
+            } else {
+                message.warning(res.data.msg)
+            }
+        })
+    
     };
 
     onFinishFailed = errorInfo => {
@@ -51,8 +49,10 @@ export default class Login extends Component {
     render() {
         return (
             <div className="login">
+                <p style={{textAlign:"center",color:"#4860e6"}}>登录</p>
                 <Form
                     {...layout}
+                    size="large"
                     name="basic"
                     initialValues={{ remember: true }}
                     onFinish={this.onFinish}
@@ -60,28 +60,27 @@ export default class Login extends Component {
                 >
                     <Form.Item
                         label="用户名"
-                        name="username"
+                        name="name"
                         rules={[{ required: true, message: '请输入用户名！' }]}
                     >
-                        <Input />
+                        <Input placeholder="请输入用户名！" />
                     </Form.Item>
 
                     <Form.Item
+                        style={{ margin: "50px 0" }}
                         label="密码"
-                        name="password"
+                        name="pwd"
                         rules={[{ required: true, message: '请输入密码！' }]}
                     >
-                        <Input.Password />
+                        <Input.Password placeholder="请输入密码！"  />
                     </Form.Item>
 
-                    {/* <Form.Item {...tailLayout} name="remember" valuePropName="checked">
-                        <Checkbox>记住我</Checkbox>
-                    </Form.Item> */}
-
-                    <Form.Item style={{ textAlign: "center" }} >
+                    <Form.Item wrapperCol={{ span: 24 }} style={{ textAlign: "center", margin: "50px" }} >
                         <Button type="primary" onClick={this.onSubmit} htmlType="submit">登录</Button>
                     </Form.Item>
                 </Form>
+                <Button  type="link" style={{textAlign:"right",width:"100%"}} onClick={()=>{window.location.href="/#/logon"}} >没有账号，去注册</Button>
+
             </div>
         )
     }

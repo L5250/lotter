@@ -12,13 +12,15 @@
     "customize-cra": "^0.9.1",
     "react": "^16.13.1",
     "react-app-rewired": "^2.1.5",
+    "react-cookies": "^0.1.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "redux": "^4.0.5",
-    "scss": "^0.2.4"
+    "scss": "^0.2.4",
+    "svg.js": "^2.7.1"
   },
   "scripts": {
     "start": "react-app-rewired start",

@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { addCount, reduceCount } from '../../store/actions/countAction';
 import { Layout, Button, Select, Table, Divider } from 'antd';
 import { UserOutlined, CaretDownOutlined, SearchOutlined } from '@ant-design/icons'
+import SVG from "svg.js"
+import axios from 'axios';
 import './index.scss'
 
 const { Option } = Select;
@@ -17,228 +19,178 @@ class Trend extends Component {
         lineParams: [],//画布参数
     }
     componentDidMount() {
-        console.log(this.props);
+        this.svgTable()
+    }
+    //ajax请求
+    getData = () => {
+        axios.get('https://5b5e71c98e9f160014b88cc9.mockapi.io/api/v1/lists')
+            .then(res => {
+                console.log(res);
+                console.log(this.state);
+            })
 
-        console.log(this.refs);
-        let rectObject = this.refs.canvas.getBoundingClientRect();
-        console.log(rectObject);
-        // this.updateCanvas();
-
-        this.createLine()
-
+        let data = { "code": "1234", "name": "yyyy" };
+        axios.post(``, data)
+            .then(res => {
+                console.log('res=>', res);
+            })
     }
 
-    updateCanvas() {
-        const ctx = this.refs.canvas.getContext('2d');
-        const ctx0 = this.refs.bitCanvas0.getContext('2d');
-        const { lineParams } = this.state
-        for (let i = 0; i < lineParams.length; i++) {
-            let ctxNo = ctx + i
-            // let ctxCan = bitCanvas + i
-            // const ctxNo = this.refs.ctxCan.getContext('2d');
-
-            ctxNo.moveTo(0, 0);
-            ctxNo.lineTo(lineParams.lineToX, lineParams.lineToY);
-        }
-
-        ctx.moveTo(0, 0);
-        ctx.lineTo(100, 90);
-        ctx.lineTo(20, 90);
-
-        ctx.stroke();
+    userClick = () => {
+        window.location.href = "/#/login"
     }
 
-    createLine = () => {
-        let bitIds0 = document.getElementsByClassName("Bit0")
-        let bitIds1 = document.getElementsByClassName("Bit1")
-        let bitIds2 = document.getElementsByClassName("Bit2")
-        let bitIds3 = document.getElementsByClassName("Bit3")
-        let bitIds4 = document.getElementsByClassName("Bit4")
-        let bitIds5 = document.getElementsByClassName("Bit5")
-        let bitIds6 = document.getElementsByClassName("Bit6")
-        let bitIds7 = document.getElementsByClassName("Bit7")
-        let bitIds8 = document.getElementsByClassName("Bit8")
-        let bitIds9 = document.getElementsByClassName("Bit9")
-        // let childWidth = ids.offsetWidth;
-        console.log(bitIds0);
-        let bitPosition = []
-        for (let i = 1; i < bitIds0.length; i++) {
-            if (bitIds0[i].innerText) {
-                bitPosition.push(bitIds0[i].getBoundingClientRect())
-            }
+    svgTable = () => {
+        let draw = SVG('chart_svg').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        console.log(document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let ball_9Arr = document.getElementsByClassName('ball_9');
+        for (let i = 0; i < ball_9Arr.length; i++) {
+            // console.log(ball_9Arr[i].offsetParent.offsetParent.offsetParent.offsetLeft)
+            console.log(this.getPosition(ball_9Arr[i], 'left'));
+            console.log(this.getPosition(ball_9Arr[i], 'top'));
+            let arrb = [];
+            arrb.push(this.getPosition(ball_9Arr[i], 'left'));
+            arrb.push(this.getPosition(ball_9Arr[i], 'top'));
+            arr.push(arrb);
         }
-
-        for (let i = 1; i < bitIds1.length; i++) {
-            if (bitIds1[i].innerText) {
-                bitPosition.push(bitIds1[i].getBoundingClientRect())
-            }
-        }
-        for (let i = 1; i < bitIds2.length; i++) {
-            if (bitIds2[i].innerText) {
-                bitPosition.push(bitIds2[i].getBoundingClientRect())
-            }
-        }
-        for (let i = 1; i < bitIds3.length; i++) {
-            if (bitIds3[i].innerText) {
-                bitPosition.push(bitIds3[i].getBoundingClientRect())
-            }
-        }
-        for (let i = 1; i < bitIds4.length; i++) {
-            if (bitIds4[i].innerText) {
-                bitPosition.push(bitIds4[i].getBoundingClientRect())
-            }
-        }
-        for (let i = 1; i < bitIds5.length; i++) {
-            if (bitIds5[i].innerText) {
-                bitPosition.push(bitIds5[i].getBoundingClientRect())
-            }
-        }
-        for (let i = 1; i < bitIds6.length; i++) {
-            if (bitIds6[i].innerText) {
-                bitPosition.push(bitIds6[i].getBoundingClientRect())
-            }
-        }
-        for (let i = 1; i < bitIds7.length; i++) {
-            if (bitIds7[i].innerText) {
-                bitPosition.push(bitIds7[i].getBoundingClientRect())
-            }
-        }
-        for (let i = 1; i < bitIds8.length; i++) {
-            if (bitIds8[i].innerText) {
-                bitPosition.push(bitIds8[i].getBoundingClientRect())
-            }
-        }
-        for (let i = 1; i < bitIds9.length; i++) {
-            if (bitIds9[i].innerText) {
-                bitPosition.push(bitIds9[i].getBoundingClientRect())
-            }
-        }
-
-        // console.log(childWidth);
-
-        let lineParams = []
-        for (let i = 0; i < bitPosition.length; i++) {
-            for (let j = 1; j < bitPosition.length; j++) {
-                lineParams.push(
-                    {
-                        width: Math.abs(bitPosition[i].x - bitPosition[j].x),
-                        height: Math.abs(bitPosition[i].y - bitPosition[j].y),
-                        left: bitPosition[i].x + bitPosition[i].width / 2,
-                        top: bitPosition[i].y + bitPosition[i].height / 2,
-                        lineToX: bitPosition[j].x,
-                        lineToY: bitPosition[j].y,
-                    }
-                )
-            }
-        }
-
-        console.log(lineParams);
-        this.setState({
-            bitPosition,
-            lineParams,
-        })
-
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: '#ff0000' });
     }
 
-    createCanvas = () => {
-        const { lineParams } = this.state
-        lineParams.map((item, index) => {
-            return (
-                <canvas key={index} ref={"bitCanvas" + index} width={item.width} height={item.height}
-                    style={{ background: "#ccc", position: "absolute", left: item.left, top: item.top }}
-                ></canvas>
-            )
-        })
+    getPosition = (element, name) => {
+        // console.log(element, name);
+        name = name.toLowerCase().replace("left", "Left").replace("top", "Top");
+        let offset = 'offset' + name;
+        let offsetWH = name == 'Left' ? 'offsetWidth' : 'offsetHeight';
+        let actualLeft = element[offset];
+        console.log(actualLeft);
+        let current = element.offsetParent;
+        // console.log(current);
+        if (current == 'table#table.table') { current = null; }
+        while (current !== null) {
+            actualLeft += current[offset];
+            current = current.offsetParent;
+        }
+        return actualLeft + (element[offsetWH] / 2);
     }
 
     search = () => {
         console.log(this.props);
-        this.props.setStateData({
-            a: 3
-        })
+
     }
 
     columns = [
         {
             title: "期号",
             dataIndex: "ti",
-            // width: "78px"
         },
         {
             title: "奖号",
             dataIndex: "",
-            // width: "57px"
         },
         {
             title: "和值",
             dataIndex: "",
-            // width: "40px"
         },
         {
             title: "跨度",
             dataIndex: "",
-            // width: "40px"
         },
         {
             title: "个位",
             dataIndex: "",
-            // width: "241px",
             padding: 0,
             children: [
                 {
                     title: '0',
                     dataIndex: 'qq',
-                    className: "Bit0",
-                    // render: (text, record, index, e) => {
-                    //     return (
-                    //         <div  onClick={e => this.getXY(e)}>{text}</div>
-                    //     )
-                    // },
+                    render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "ball_9" : null} >{text}</div>
+                        )
+                    },
+
                 },
                 {
                     title: '1',
                     dataIndex: 'e',
-                    className: "Bit1",
+                    render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "ball_9" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '2',
                     dataIndex: 'e',
-                    className: "Bit2",
+                    render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "ball_9" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '3',
                     dataIndex: 'w',
-                    className: "Bit3",
+                    render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "ball_9" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '4',
                     dataIndex: 'wqq',
-                    className: "Bit4",
+                    render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "ball_9" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '5',
                     dataIndex: 'df',
-                    className: "Bit5",
+                    render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "ball_9" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '6',
                     dataIndex: 'df',
-                    className: "Bit6",
+                    render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "ball_9" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '7',
                     dataIndex: 'fd',
-                    className: "Bit7",
+                    render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "ball_9" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '8',
                     dataIndex: 'dff',
-                    className: "Bit8",
+                    render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "ball_9" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '9',
                     dataIndex: 'fff',
-                    className: "Bit9",
+                    render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "ball_9" : null} >{text}</div>
+                        )
+                    },
                 },
 
             ]
@@ -250,27 +202,57 @@ class Trend extends Component {
             children: [
                 {
                     title: "大",
-                    dataIndex: "",
+                    dataIndex: "q",
+                      render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "shape" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: "小",
-                    dataIndex: "",
+                    dataIndex: "q",
+                      render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "shape" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: "奇",
-                    dataIndex: "",
+                    dataIndex: "q",
+                      render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "shape" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: "偶",
-                    dataIndex: "",
+                    dataIndex: "w",
+                      render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "shape" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: "质",
-                    dataIndex: "",
+                    dataIndex: "w",
+                      render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "shape" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: "和",
-                    dataIndex: "",
+                    dataIndex: "e",
+                      render: (text, record, index, e) => {
+                        return (
+                            <div className={text ? "shape" : null} >{text}</div>
+                        )
+                    },
                 },
             ]
         },
@@ -365,22 +347,23 @@ class Trend extends Component {
         const { bitPosition, lineParams } = this.state
         console.log(bitPosition);
         return (
-            <div className="main">
+            <div class="tableSvg main" id="tableSvg">
                 <Layout style={{ height: "100%" }}>
-                    <div style={{ background: "#5757b1", height: "100px", padding: "0", display: "flex", justifyContent: "space-between" }}>
-                        <Button ghost type="link" style={{ width: "100px", height: "100%" }}>
+                    <div style={{ background: "#5757b1", height: "100px", padding: "0", display: "flex", justifyContent: "space-between", zIndex: 999 }}>
+                        <Button ghost onClick={this.userClick} type="link" style={{ width: "100px", height: "100%" }}>
                             <UserOutlined color="#fff" style={{ fontSize: "xx-large", lineHeight: "" }} />
 
                         </Button>
                         <div style={{ margin: "auto 0" }}>
                             <Select
                                 defaultValue="1"
-                                dropdownStyle={{ fontSize: "large" }}
-                                // suffixIcon={<CaretDownOutlined color="#fff" />}
+                                dropdownClassName="headerSelect"
+                                suffixIcon={<CaretDownOutlined style={{ color: "#fff", fontSize: "xx-large", marginTop: "-10px" }} />}
                                 size="large"
                                 style={{ color: "#fff", fontSize: "xx-large", height: "50px", }} bordered={false}
                             >
                                 <Option value="1">腾讯十分彩</Option>
+                                <Option value="13">22</Option>
                             </Select>
                         </div>
                         <div>
@@ -391,88 +374,83 @@ class Trend extends Component {
                             </Button>
                         </div>
                     </div>
-                    <Content style={{ padding: "" }}>
-                        <div style={{ height: "100px", lineHeight: "100px", padding: "0 50px" }}>
-                            <span style={{}}>第
-                            <span>{111}</span>
+                    <div style={{ height: "100px", lineHeight: "100px", padding: "0 50px" }}>
+                        <span style={{}}>第
+                            <span style={{ fontSize: "50px", color: "#f7833b" }}>{111}</span>
                              期
                              </span>
-                            <span>距开奖
-                                <span>{} </span>
-                            </span>
+                        <span style={{ margin: "0 20px" }}>距开奖
+                                <span style={{ fontSize: "50px", color: "#f7833b" }}>{222} </span>
+                        </span>
+                    </div>
+                    <Divider style={{ margin: "5px 0", background: "#ccc" }} />
+                    <div style={{ height: "100px", lineHeight: "100px", display: "flex", padding: "0 40px" }}>
+                        <div style={{ marginRight: "20px" }}>
+                            <span>第</span>
+                            <span style={{ margin: "0 10px" }}>{1}</span>
+                            <span>期结果</span>
                         </div>
-                        <Divider style={{ margin: "5px 0", background: "#ccc" }} />
-                        <div style={{ height: "100px", lineHeight: "100px", display: "flex", padding: "0 40px" }}>
-                            <div>第{1}期结果</div>
-                            <div className="prizeBall">1</div>
-                            <div className="prizeBall">1</div>
-                            <div className="prizeBall">1</div>
-                            <div className="prizeBall">1</div>
-                            <div>开奖时间：</div>
-                        </div>
+                        <div className="prizeBall">1</div>
+                        <div className="prizeBall">1</div>
+                        <div className="prizeBall">1</div>
+                        <div className="prizeBall">1</div>
+                        <div>开奖时间：11111</div>
+                    </div>
 
-                        <div style={{ padding: "0 40px" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", height: "80px", lineHeight: "80px" }}>
-                                <div>定位</div>
-                                <a href="#:javascript">万位</a>
-                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <a href="#:javascript">千位</a>
-                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <a href="#:javascript">百位</a>
-                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <a href="#:javascript">十位</a>
-                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <a href="#:javascript">个位</a>
-                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <a href="#:javascript">大小单双</a>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", height: "80px", lineHeight: "80px" }}>
-                                <div>其他</div>
-                                <a href="#:javascript">五星走势</a>
-                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <a href="#:javascript">五星综合</a>
-                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <a href="#:javascript">大小</a>
-                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <a href="#:javascript">单双</a>
-                                <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <a href="#:javascript">龙虎</a>
-                            </div>
+                    <div style={{ padding: "0 40px", zIndex: 999 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", height: "80px", lineHeight: "80px" }}>
+                            <div className="firstWord">定位</div>
+                            <Button style={{ fontSize: "xx-large", height: "80px" }} type="link">万位</Button>
+                            <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
+                            <Button style={{ fontSize: "xx-large", height: "80px" }} type="link">千位</Button>
+                            <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
+                            <Button style={{ fontSize: "xx-large", height: "80px" }} type="link">百位</Button>
+                            <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
+                            <Button style={{ fontSize: "xx-large", height: "80px" }} type="link">十位</Button>
+                            <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
+                            <Button style={{ fontSize: "xx-large", height: "80px" }} type="link">个位</Button>
+                            <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
+                            <Button style={{ fontSize: "xx-large", height: "80px" }} type="link">大小单双</Button>
                         </div>
-                        <div className="canvasTable">
+                        <div style={{ display: "flex", justifyContent: "space-between", height: "80px", lineHeight: "80px", margin: "20px 0" }}>
+                            <div className="firstWord">其他</div>
+                            <Button style={{ fontSize: "xx-large", height: "80px" }} type="link">五星走势</Button>
+                            <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
+                            <Button style={{ fontSize: "xx-large", height: "80px" }} type="link">五星综合</Button>
+                            <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
+                            <Button style={{ fontSize: "xx-large", height: "80px" }} type="link">大小</Button>
+                            <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
+                            <Button style={{ fontSize: "xx-large", height: "80px" }} type="link">单双</Button>
+                            <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
+                            <Button style={{ fontSize: "xx-large", height: "80px" }} type="link">龙虎</Button>
+                        </div>
+                    </div>
+                    <Content style={{ padding: "" }}>
+
+                        <div class="tableSvg" id="tableSvg">
 
                             <Table
                                 columns={this.columns}
                                 className="list"
-                                // style={{ width: "100%", position: "absolute" }}
                                 rowKey={"qq"}
                                 bordered
                                 pagination={false}
-                                // size="small"
                                 dataSource={[{ ti: "12345-222", qq: 1, b: 2, c: 3, age: 7 }, { wqq: 11, b: 22, c: 33, age: 27 }]}
                             />
-
-
                         </div>
-
                     </Content>
-                    {/* <Footer>
-
-                    </Footer> */}
-                    <div
-                        // style={{ width: "100%", position: "absolute" }}
-                        ref={this.tableRef}
-                    >
-                        {
-                            this.createCanvas
-                        }
-                        <canvas ref="canvas"
-                            width="200" height="100"
-                        // style={{ border: "1px solid #000000", position: "absolute" }}
-                        > 您的浏览器不支持 HTML5 canvas 标签。</canvas>
-
-                    </div>
                 </Layout>
+                <div class="chart_svg" id="chart_svg"></div>
+
+                <div class="chart_svg" id="chart_svg"></div>
+
+                <div class="chart_svg" id="chart_svg"></div>
+                
+                <div class="chart_svg" id="chart_svg"></div>
+
+                <div class="chart_svg" id="chart_svg"></div>
+
+
             </div>
         );
     }

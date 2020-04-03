@@ -4,7 +4,8 @@
     /* width: 75rem; */
     margin: 0 auto;
     height: 100%;
-    width: 980px;
+    max-width: 100%;
+    // width: 980px;
     position: relative;
     font-size: xx-large;
 
@@ -13,22 +14,38 @@
         height: 100px;
     }
 
+
+
     .prizeBall {
         width: 50px;
         height: 50px;
         border-radius: 50%;
         background: #3b81cd;
-        margin: 25px 20px;
+        margin: 25px 20px 0 0;
         line-height: 50px;
         text-align: center;
         color: #fff;
     }
 
-    .canvasTable {
+    .firstWord {
+        width: 150px;
+        height: 80px;
+        background: #6c6cee;
+        color: #fff;
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    .tableSvg {
         position: relative;
         width: 100%;
-        margin-top:30px;
+        margin-top: 30px;
     }
+    .chart_svg{
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
 
     .list {
         th {
@@ -41,5 +58,13 @@
             text-align: center !important;
             font-size: 5px !important;
         }
+    }
+}
+
+.headerSelect {
+    .ant-select-item-option-content {
+        height: 60px;
+        font-size: xx-large;
+        line-height: 60px;
     }
 }
