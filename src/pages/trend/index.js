@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { addCount, reduceCount } from '../../store/actions/countAction';
-import { Layout, Button, Select, Table, Divider } from 'antd';
+import { Layout, Button, Select, Table, Divider, Modal } from 'antd';
 import { UserOutlined, CaretDownOutlined, SearchOutlined } from '@ant-design/icons'
 import SVG from "svg.js"
 import axios from 'axios';
@@ -17,9 +17,31 @@ class Trend extends Component {
     state = {
         bitPosition: [],//折线1绝对定位
         lineParams: [],//画布参数
+        visible: false,
     }
     componentDidMount() {
+        this.getData()
+
         this.svgTable()
+        this.svgTable1()
+        this.svgTable1a()
+        this.svgTable1b()
+        this.svgTable2()
+        this.svgTable3()
+        this.svgTable4()
+    }
+
+    getData = () => {
+        axios.post(`http://cp.f293.cn/api/index/list`)
+            .then(res => {
+                console.log('res=>', res);
+            })
+    }
+    getTableData = () => {
+        axios.post(`http://cp.f293.cn/api/index/getdata`, "")
+            .then(res => {
+                console.log('res=>', res);
+            })
     }
     //ajax请求
     getData = () => {
@@ -39,7 +61,7 @@ class Trend extends Component {
     userClick = () => {
         window.location.href = "/#/login"
     }
-
+    //个位
     svgTable = () => {
         let draw = SVG('chart_svg').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
         console.log(document.getElementById('tableSvg').offsetHeight);
@@ -54,8 +76,92 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_9Arr[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: '#ff0000' });
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(204, 0, 0)' });
     }
+    //个位形态分布
+    //大小
+    svgTable1 = () => {
+        let draw = SVG('chart_svg1').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        console.log(document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let shape = document.getElementsByClassName('shape');
+        for (let i = 0; i < shape.length; i++) {
+            let arrb = [];
+            arrb.push(this.getPosition(shape[i], 'left'));
+            arrb.push(this.getPosition(shape[i], 'top'));
+            arr.push(arrb);
+        }
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(248, 99, 0)' });
+    }
+    //奇偶
+    svgTable1a = () => {
+        let draw = SVG('chart_svg1_1').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let parity = document.getElementsByClassName('parity');
+        for (let i = 0; i < parity.length; i++) {
+            let arrb = [];
+            arrb.push(this.getPosition(parity[i], 'left'));
+            arrb.push(this.getPosition(parity[i], 'top'));
+            arr.push(arrb);
+        }
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(42, 82, 127)' });
+    }
+    //质和
+    svgTable1b = () => {
+        let draw = SVG('chart_svg1_2').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        console.log(document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let prime = document.getElementsByClassName('prime');
+        for (let i = 0; i < prime.length; i++) {
+            let arrb = [];
+            arrb.push(this.getPosition(prime[i], 'left'));
+            arrb.push(this.getPosition(prime[i], 'top'));
+            arr.push(arrb);
+        }
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(105, 131, 83)' });
+    }
+    //
+    //个位012路
+    svgTable2 = () => {
+        let draw = SVG('chart_svg2').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        console.log(document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let bit = document.getElementsByClassName('bit');
+        for (let i = 0; i < bit.length; i++) {
+            let arrb = [];
+            arrb.push(this.getPosition(bit[i], 'left'));
+            arrb.push(this.getPosition(bit[i], 'top'));
+            arr.push(arrb);
+        }
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(0, 135, 34)' });
+    }
+    // 个位生平降
+    svgTable3 = () => {
+        let draw = SVG('chart_svg3').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let lifting = document.getElementsByClassName('lifting');
+        for (let i = 0; i < lifting.length; i++) {
+            let arrb = [];
+            arrb.push(this.getPosition(lifting[i], 'left'));
+            arrb.push(this.getPosition(lifting[i], 'top'));
+            arr.push(arrb);
+        }
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(248, 99, 0)' });
+    }
+    //个位振幅
+    svgTable4 = () => {
+        let draw = SVG('chart_svg4').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let amplitude = document.getElementsByClassName('amplitude');
+        for (let i = 0; i < amplitude.length; i++) {
+            let arrb = [];
+            arrb.push(this.getPosition(amplitude[i], 'left'));
+            arrb.push(this.getPosition(amplitude[i], 'top'));
+            arr.push(arrb);
+        }
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(30, 136, 238)' });
+    }
+
 
     getPosition = (element, name) => {
         // console.log(element, name);
@@ -77,6 +183,17 @@ class Trend extends Component {
     search = () => {
         console.log(this.props);
 
+    }
+
+    openModal = () => {
+        this.setState({
+            visible: true
+        })
+    }
+    handleCancel = () => {
+        this.setState({
+            visible: false
+        })
     }
 
     columns = [
@@ -202,8 +319,8 @@ class Trend extends Component {
             children: [
                 {
                     title: "大",
-                    dataIndex: "q",
-                      render: (text, record, index, e) => {
+                    dataIndex: "big",
+                    render: (text, record, index, e) => {
                         return (
                             <div className={text ? "shape" : null} >{text}</div>
                         )
@@ -211,8 +328,8 @@ class Trend extends Component {
                 },
                 {
                     title: "小",
-                    dataIndex: "q",
-                      render: (text, record, index, e) => {
+                    dataIndex: "small",
+                    render: (text, record, index, e) => {
                         return (
                             <div className={text ? "shape" : null} >{text}</div>
                         )
@@ -220,37 +337,37 @@ class Trend extends Component {
                 },
                 {
                     title: "奇",
-                    dataIndex: "q",
-                      render: (text, record, index, e) => {
+                    dataIndex: "df",
+                    render: (text, record, index, e) => {
                         return (
-                            <div className={text ? "shape" : null} >{text}</div>
+                            <div className={text ? "parity" : null} >{text}</div>
                         )
                     },
                 },
                 {
                     title: "偶",
-                    dataIndex: "w",
-                      render: (text, record, index, e) => {
+                    dataIndex: "as",
+                    render: (text, record, index, e) => {
                         return (
-                            <div className={text ? "shape" : null} >{text}</div>
+                            <div className={text ? "parity" : null} >{text}</div>
                         )
                     },
                 },
                 {
                     title: "质",
-                    dataIndex: "w",
-                      render: (text, record, index, e) => {
+                    dataIndex: "df",
+                    render: (text, record, index, e) => {
                         return (
-                            <div className={text ? "shape" : null} >{text}</div>
+                            <div className={text ? "prime" : null} >{text}</div>
                         )
                     },
                 },
                 {
                     title: "和",
-                    dataIndex: "e",
-                      render: (text, record, index, e) => {
+                    dataIndex: "as",
+                    render: (text, record, index, e) => {
                         return (
-                            <div className={text ? "shape" : null} >{text}</div>
+                            <div className={text ? "prime" : null} >{text}</div>
                         )
                     },
                 },
@@ -263,15 +380,30 @@ class Trend extends Component {
             children: [
                 {
                     title: "0",
-                    dataIndex: "",
+                    dataIndex: "as",
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "bit" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: "1",
-                    dataIndex: "",
+                    dataIndex: "qq",
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "bit" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: "2",
-                    dataIndex: "",
+                    dataIndex: "w",
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "bit" : null} >{text}</div>
+                        )
+                    },
                 },
             ]
         },
@@ -282,15 +414,30 @@ class Trend extends Component {
             children: [
                 {
                     title: "升",
-                    dataIndex: "",
+                    dataIndex: "go",
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "lifting" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: "平",
-                    dataIndex: "",
+                    dataIndex: "w",
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "lifting" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: "降",
-                    dataIndex: "",
+                    dataIndex: "to",
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "lifting" : null} >{text}</div>
+                        )
+                    },
                 },
             ]
         },
@@ -302,42 +449,92 @@ class Trend extends Component {
                 {
                     title: '0',
                     dataIndex: 'age',
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "amplitude" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '1',
                     dataIndex: 'age',
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "amplitude" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '2',
                     dataIndex: 'age',
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "amplitude" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '3',
                     dataIndex: 'age',
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "amplitude" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '4',
                     dataIndex: 'age',
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "amplitude" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '5',
                     dataIndex: 'age',
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "amplitude" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '6',
                     dataIndex: 'age',
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "amplitude" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '7',
                     dataIndex: 'age',
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "amplitude" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '8',
                     dataIndex: 'age',
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "amplitude" : null} >{text}</div>
+                        )
+                    },
                 },
                 {
                     title: '9',
                     dataIndex: 'age',
+                    render: (text, record, index) => {
+                        return (
+                            <div className={text ? "amplitude" : null} >{text}</div>
+                        )
+                    },
                 },
 
             ]
@@ -355,7 +552,12 @@ class Trend extends Component {
 
                         </Button>
                         <div style={{ margin: "auto 0" }}>
-                            <Select
+                            <Button
+                                onClick={this.openModal}
+                                style={{ width: "200px", height: "50px", fontSize: "xx-large" }} type="link" ghost>
+                                腾讯十分彩 <CaretDownOutlined style={{ color: "#fff", fontSize: "xx-large", marginTop: "-10px" }} />
+                            </Button>
+                            {/* <Select
                                 defaultValue="1"
                                 dropdownClassName="headerSelect"
                                 suffixIcon={<CaretDownOutlined style={{ color: "#fff", fontSize: "xx-large", marginTop: "-10px" }} />}
@@ -364,7 +566,7 @@ class Trend extends Component {
                             >
                                 <Option value="1">腾讯十分彩</Option>
                                 <Option value="13">22</Option>
-                            </Select>
+                            </Select> */}
                         </div>
                         <div>
                             <Button ghost size="large" style={{ width: "100px", height: "50px" }}>计划</Button>
@@ -427,7 +629,7 @@ class Trend extends Component {
                     </div>
                     <Content style={{ padding: "" }}>
 
-                        <div class="tableSvg" id="tableSvg">
+                        <div>
 
                             <Table
                                 columns={this.columns}
@@ -435,21 +637,49 @@ class Trend extends Component {
                                 rowKey={"qq"}
                                 bordered
                                 pagination={false}
-                                dataSource={[{ ti: "12345-222", qq: 1, b: 2, c: 3, age: 7 }, { wqq: 11, b: 22, c: 33, age: 27 }]}
+                                dataSource={[{ ti: "12345-222",go:2,as:2, big: 12, qq: 1, b: 2, c: 3, age: 7 }, {df:4, wqq: 11,to:2, small: 2, b: 22, c: 33, age: 27 }]}
                             />
                         </div>
                     </Content>
                 </Layout>
                 <div class="chart_svg" id="chart_svg"></div>
 
-                <div class="chart_svg" id="chart_svg"></div>
+                <div class="chart_svg1" id="chart_svg1"></div>
 
-                <div class="chart_svg" id="chart_svg"></div>
-                
-                <div class="chart_svg" id="chart_svg"></div>
+                <div class="chart_svg2" id="chart_svg2"></div>
 
-                <div class="chart_svg" id="chart_svg"></div>
+                <div class="chart_svg3" id="chart_svg3"></div>
 
+                <div class="chart_svg4" id="chart_svg4"></div>
+
+                <div class="chart_svg1_1" id="chart_svg1_1"></div>
+
+                <div class="chart_svg1_2" id="chart_svg1_2"></div>
+
+
+
+                <Modal
+                    // title="实时彩类"
+                    visible={this.state.visible}
+                    onOk={this.handleOk}
+                    onCancel={this.handleCancel}
+                    footer={false}
+                // okText="确定"
+                // cancelText="取消"
+                // footer={
+                //     <div>
+                //         <Button type="primary" style={{ fontSize: "xx-large", height: "60px" }}>确定</Button>
+                //         <Button style={{ fontSize: "xx-large", height: "60px" }}>取消</Button>
+                //     </div>
+                // }
+                >
+                    <p style={{ fontSize: "x-large" }}>实时彩类</p>
+                    <div>
+                        1
+                    </div>
+                    <p></p>
+                    <div style={{ fontSize: "x-large" }}>赛车类</div>
+                </Modal>
 
             </div>
         );
