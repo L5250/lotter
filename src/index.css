@@ -21,3 +21,9 @@ code {
 .list th {
   padding: 0;
 }
+
+.ant-message {
+  font-size: xx-large;
+  line-height: 60px;
+
+}

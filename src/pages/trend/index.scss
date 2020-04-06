@@ -21,7 +21,7 @@
         height: 50px;
         border-radius: 50%;
         background: #3b81cd;
-        margin: 25px 20px 0 0;
+        margin: 25px 15px 0 0;
         line-height: 50px;
         text-align: center;
         color: #fff;
@@ -36,11 +36,14 @@
         text-align: center;
     }
 
-    .tableSvg {
-        position: relative;
-        width: 100%;
-        margin-top: 30px;
-    }
+    // .tableSvg {
+    //     position: static;
+    //     width: 100%;
+    //     margin-top: 30px;
+    // }
+
+
+
 
 
     .chart_svg {
@@ -54,11 +57,13 @@
         top: 0;
         left: 0;
     }
+
     .chart_svg1_1 {
         position: absolute;
         top: 0;
         left: 0;
     }
+
     .chart_svg1_2 {
         position: absolute;
         top: 0;
@@ -90,18 +95,81 @@
     }
 
     // 
-    .ball_9{
-        background: red;
+    .ball_9 {
+        background: rgb(204, 0, 0);
         border-radius: 50%;
-        width: 100%;
-        height: 100%;
+        width: 21.25px;
+        height: 21.25px;
+        line-height: 21.25px;
         color: #fff;
         z-index: 999;
+        margin: auto;
+    }
+    .shape {
+        background: rgb(248, 99, 0);
+        border-radius: 50%;
+        width: 21.25px;
+        height: 21.25px;
+        line-height: 21.25px;
+        color: #fff;
+        z-index: 999;
+        margin: auto;
+    }
+    .parity {
+        background: rgb(42, 82, 127);
+        border-radius: 50%;
+        width: 21.25px;
+        height: 21.25px;
+        line-height: 21.25px;
+        color: #fff;
+        z-index: 999;
+        margin: auto;
+    }
+    .prime {
+        background: rgb(105, 131, 83);
+        border-radius: 50%;
+        width: 21.25px;
+        height: 21.25px;
+        line-height: 21.25px;
+        color: #fff;
+        z-index: 999;
+        margin: auto;
+    }
+    .bit {
+        background: rgb(0, 135, 34);
+        border-radius: 50%;
+        width: 21.25px;
+        height: 21.25px;
+        line-height: 21.25px;
+        color: #fff;
+        z-index: 999;
+        margin: auto;
+    }
+    .lifting {
+        background: rgb(248, 99, 0);
+        border-radius: 50%;
+        width: 21.25px;
+        height: 21.25px;
+        line-height: 21.25px;
+        color: #fff;
+        z-index: 999;
+        margin: auto;
+    }
+    .amplitude {
+        background: rgb(30, 136, 238);
+        border-radius: 50%;
+        width: 21.25px;
+        height: 21.25px;
+        line-height: 21.25px;
+        color: #fff;
+        z-index: 999;
+        margin: auto;
     }
 
 
 
     .list {
+        position: relative;
         th {
             padding: 0px !important;
             // margin: 5px !important;
@@ -109,18 +177,30 @@
         }
 
         td {
-            padding: 5px !important;
+            padding: 0px !important;
             // margin: 5px !important;
             text-align: center !important;
             font-size: 5px !important;
+            width: 21.25px;
+            height: 21.25px;
         }
     }
 }
 
+// ---------------------
 .headerSelect {
     .ant-select-item-option-content {
         height: 60px;
         font-size: xx-large;
         line-height: 60px;
+    }
+}
+
+// ---------------------
+.trendSort {
+    .trendImg {
+        width: 80px;
+        height: 80px;
+        margin: 15px;
     }
 }
