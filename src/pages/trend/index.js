@@ -130,7 +130,7 @@ class Trend extends Component {
         }, 500);
         console.log(tableStr);
     }
-
+    //其他
     changeTable = (crr) => {
         this.setState({
             columnsIndex: crr
@@ -1004,6 +1004,350 @@ class Trend extends Component {
             ]
         },
     ]
+    fiveAllColumns = [
+        {
+            title: "期号",
+            dataIndex: "q",
+            width: "120px"
+        },
+        {
+            title: "奖号",
+            dataIndex: "arr",
+            width: "60px",
+            render: (text, record) => text.replace(/,/g, "")
+
+        },
+        {
+            title: "和值",
+            dataIndex: "arr",
+            width: "60px",
+            render: (text, record) => (
+                this.sum(text, record)
+            )
+        },
+        {
+            title: "跨度",
+            dataIndex: "arr",
+            width: "60px",
+            render: text => this.cutBuy(text)
+        },
+        {
+            title: "基本号码",
+            dataIndex: "h",
+            children: [
+                {
+                    title: '0',
+                    dataIndex: 'h1',
+                    render: (text, record, index) => {
+                        return (
+                            text === "0" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '1',
+                    dataIndex: 'h1',
+                    render: (text, record, index) => {
+                        return (
+                            text === "1" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '2',
+                    dataIndex: 'h1',
+                    render: (text, record, index) => {
+                        return (
+                            text === "2" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '3',
+                    dataIndex: 'h1',
+                    render: (text, record, index) => {
+                        return (
+                            text === "3" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '4',
+                    dataIndex: 'h1',
+                    render: (text, record, index) => {
+                        return (
+                            text === "4" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '5',
+                    dataIndex: 'h1',
+                    render: (text, record, index) => {
+                        return (
+                            text === "5" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '6',
+                    dataIndex: 'h1',
+                    render: (text, record, index) => {
+                        return (
+                            text === "6" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '7',
+                    dataIndex: 'h1',
+                    render: (text, record, index) => {
+                        return (
+                            text === "7" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '8',
+                    dataIndex: 'h1',
+                    render: (text, record, index) => {
+                        return (
+                            text === "8" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '9',
+                    dataIndex: 'h1',
+                    render: (text, record, index) => {
+                        return (
+                            text === "9" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                        )
+                    },
+                },
+
+            ]
+        },
+        {
+            title: "和值尾号",
+            dataIndex: "h",
+            width: "60px",
+            children: [
+                {
+                    title: '0',
+                    dataIndex: 'h2',
+                    render: (text, record, index) => {
+                        return (
+                            text === "0" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '1',
+                    dataIndex: 'h2',
+                    render: (text, record, index) => {
+                        return (
+                            text === "1" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '2',
+                    dataIndex: 'h2',
+                    render: (text, record, index) => {
+                        return (
+                            text === "2" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '3',
+                    dataIndex: 'h2',
+                    render: (text, record, index) => {
+                        return (
+                            text === "3" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '4',
+                    dataIndex: 'h2',
+                    render: (text, record, index) => {
+                        return (
+                            text === "4" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '5',
+                    dataIndex: 'h2',
+                    render: (text, record, index) => {
+                        return (
+                            text === "5" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '6',
+                    dataIndex: 'h2',
+                    render: (text, record, index) => {
+                        return (
+                            text === "6" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '7',
+                    dataIndex: 'h2',
+                    render: (text, record, index) => {
+                        return (
+                            text === "7" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '8',
+                    dataIndex: 'h2',
+                    render: (text, record, index) => {
+                        return (
+                            text === "8" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '9',
+                    dataIndex: 'h2',
+                    render: (text, record, index) => {
+                        return (
+                            text === "9" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                        )
+                    },
+                },
+
+            ]
+        },
+        {
+            title: "跨度",
+            dataIndex: "h",
+            children: [
+                {
+                    title: '0',
+                    dataIndex: 'h3',
+                    render: (text, record, index) => {
+                        return (
+                            text === "0" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '1',
+                    dataIndex: 'h3',
+                    render: (text, record, index) => {
+                        return (
+                            text === "1" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '2',
+                    dataIndex: 'h3',
+                    render: (text, record, index) => {
+                        return (
+                            text === "2" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '3',
+                    dataIndex: 'h3',
+                    render: (text, record, index) => {
+                        return (
+                            text === "3" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '4',
+                    dataIndex: 'h3',
+                    render: (text, record, index) => {
+                        return (
+                            text === "4" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '5',
+                    dataIndex: 'h3',
+                    render: (text, record, index) => {
+                        return (
+                            text === "5" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '6',
+                    dataIndex: 'h3',
+                    render: (text, record, index) => {
+                        return (
+                            text === "6" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '7',
+                    dataIndex: 'h3',
+                    render: (text, record, index) => {
+                        return (
+                            text === "7" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '8',
+                    dataIndex: 'h3',
+                    render: (text, record, index) => {
+                        return (
+                            text === "8" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                        )
+                    },
+                },
+                {
+                    title: '9',
+                    dataIndex: 'h3',
+                    render: (text, record, index) => {
+                        return (
+                            text === "9" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                        )
+                    },
+                },
+
+            ]
+        },
+        {
+            title: "奇偶比",
+            dataIndex: "arr",
+            width: "60px",
+            render: (text, record) => (
+                this.sum(text, record)
+            )
+        },
+        {
+            title: "大小比",
+            dataIndex: "arr",
+            width: "60px",
+            render: (text, record) => (
+                this.sum(text, record)
+            )
+        },
+        {
+            title: "质合比",
+            dataIndex: "arr",
+            width: "60px",
+            render: (text, record) => (
+                this.sum(text, record)
+            )
+        },
+    ]
 
     render() {
         const { loading, loading1, dataSource, h, m, s, nextPeriods, lastPeriods, lastTime, lastResult, newData } = this.state
@@ -1447,6 +1791,7 @@ class Trend extends Component {
 
                 ]
             },
+
         ]
         return (
             <Spin spinning={loading || loading1} >
@@ -1555,15 +1900,23 @@ class Trend extends Component {
                                         pagination={false}
                                         dataSource={newData}
                                     />
-                                    :
-                                    <Table
-                                        columns={columns}
-                                        className="list"
-                                        rowKey={"q"}
-                                        bordered
-                                        pagination={false}
-                                        dataSource={newData}
-                                    />
+                                    : this.state.columnsIndex === 2 ?
+                                        <Table
+                                            columns={this.fiveAllColumns}
+                                            className="fiveAllList"
+                                            rowKey={"q"}
+                                            bordered
+                                            pagination={false}
+                                            dataSource={newData}
+                                        /> :
+                                        <Table
+                                            columns={columns}
+                                            className="list"
+                                            rowKey={"q"}
+                                            bordered
+                                            pagination={false}
+                                            dataSource={newData}
+                                        />
                             }
 
 
