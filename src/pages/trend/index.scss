@@ -185,6 +185,23 @@
             height: 21.25px;
         }
     }
+    .fiveGoList {
+        position: relative;
+        th {
+            padding: 0px !important;
+            // margin: 5px !important;
+            text-align: center !important;
+        }
+
+        td {
+            padding: 0px !important;
+            // margin: 5px !important;
+            text-align: center !important;
+            font-size: 5px !important;
+            width: 16px;
+            height: 16px;
+        }
+    }
 }
 
 // ---------------------
