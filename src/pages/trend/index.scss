@@ -94,82 +94,90 @@
         left: 0;
     }
 
-    // 
-    .ball_9 {
-        background: rgb(204, 0, 0);
-        border-radius: 50%;
-        width: 21.25px;
-        height: 21.25px;
-        line-height: 21.25px;
-        color: #fff;
-        z-index: 999;
-        margin: auto;
-    }
-    .shape {
-        background: rgb(248, 99, 0);
-        border-radius: 50%;
-        width: 21.25px;
-        height: 21.25px;
-        line-height: 21.25px;
-        color: #fff;
-        z-index: 999;
-        margin: auto;
-    }
-    .parity {
-        background: rgb(42, 82, 127);
-        border-radius: 50%;
-        width: 21.25px;
-        height: 21.25px;
-        line-height: 21.25px;
-        color: #fff;
-        z-index: 999;
-        margin: auto;
-    }
-    .prime {
-        background: rgb(105, 131, 83);
-        border-radius: 50%;
-        width: 21.25px;
-        height: 21.25px;
-        line-height: 21.25px;
-        color: #fff;
-        z-index: 999;
-        margin: auto;
-    }
-    .bit {
-        background: rgb(0, 135, 34);
-        border-radius: 50%;
-        width: 21.25px;
-        height: 21.25px;
-        line-height: 21.25px;
-        color: #fff;
-        z-index: 999;
-        margin: auto;
-    }
-    .lifting {
-        background: rgb(248, 99, 0);
-        border-radius: 50%;
-        width: 21.25px;
-        height: 21.25px;
-        line-height: 21.25px;
-        color: #fff;
-        z-index: 999;
-        margin: auto;
-    }
-    .amplitude {
-        background: rgb(30, 136, 238);
-        border-radius: 50%;
-        width: 21.25px;
-        height: 21.25px;
-        line-height: 21.25px;
-        color: #fff;
-        z-index: 999;
-        margin: auto;
-    }
-
-
 
     .list {
         position: relative;
+
+        // 
+        .ball_9 {
+            background: rgb(204, 0, 0);
+            border-radius: 50%;
+            width: 21.25px;
+            height: 21.25px;
+            line-height: 21.25px;
+            color: #fff;
+            z-index: 999;
+            margin: auto;
+        }
+
+        .shape {
+            background: rgb(248, 99, 0);
+            border-radius: 50%;
+            width: 21.25px;
+            height: 21.25px;
+            line-height: 21.25px;
+            color: #fff;
+            z-index: 999;
+            margin: auto;
+        }
+
+        .parity {
+            background: rgb(42, 82, 127);
+            border-radius: 50%;
+            width: 21.25px;
+            height: 21.25px;
+            line-height: 21.25px;
+            color: #fff;
+            z-index: 999;
+            margin: auto;
+        }
+
+        .prime {
+            background: rgb(105, 131, 83);
+            border-radius: 50%;
+            width: 21.25px;
+            height: 21.25px;
+            line-height: 21.25px;
+            color: #fff;
+            z-index: 999;
+            margin: auto;
+        }
+
+        .bit {
+            background: rgb(0, 135, 34);
+            border-radius: 50%;
+            width: 21.25px;
+            height: 21.25px;
+            line-height: 21.25px;
+            color: #fff;
+            z-index: 999;
+            margin: auto;
+        }
+
+        .lifting {
+            background: rgb(248, 99, 0);
+            border-radius: 50%;
+            width: 21.25px;
+            height: 21.25px;
+            line-height: 21.25px;
+            color: #fff;
+            z-index: 999;
+            margin: auto;
+        }
+
+        .amplitude {
+            background: rgb(30, 136, 238);
+            border-radius: 50%;
+            width: 21.25px;
+            height: 21.25px;
+            line-height: 21.25px;
+            color: #fff;
+            z-index: 999;
+            margin: auto;
+        }
+
+
+
         th {
             padding: 0px !important;
             // margin: 5px !important;
@@ -185,8 +193,60 @@
             height: 21.25px;
         }
     }
+
     .fiveGoList {
         position: relative;
+
+        .ball_1 {
+            background: rgb(204, 0, 0);
+            border-radius: 50%;
+            width: 16.6px;
+            height: 16.6px;
+            line-height: 16.6px;
+            color: #fff;
+            margin: auto;
+        }
+
+        .ball_2 {
+            background: rgb(104, 53, 53);
+            border-radius: 50%;
+            width: 16.6px;
+            height: 16.6px;
+            line-height: 16.6px;
+            color: #fff;
+            margin: auto;
+        }
+
+        .ball_3 {
+            background: rgb(204, 0, 0);
+            border-radius: 50%;
+            width: 16.6px;
+            height: 16.6px;
+            line-height: 16.6px;
+            color: #fff;
+            margin: auto;
+        }
+
+        .ball_4 {
+            background: rgb(104, 53, 53);
+            border-radius: 50%;
+            width: 16.6px;
+            height: 16.6px;
+            line-height: 16.6px;
+            color: #fff;
+            margin: auto;
+        }
+
+        .ball_5 {
+            background: rgb(204, 0, 0);
+            border-radius: 50%;
+            width: 16.6px;
+            height: 16.6px;
+            line-height: 16.6px;
+            color: #fff;
+            margin: auto;
+        }
+
         th {
             padding: 0px !important;
             // margin: 5px !important;
@@ -202,8 +262,40 @@
             height: 16px;
         }
     }
+
     .fiveAllList {
         position: relative;
+
+        .budge {
+            background: rgb(104, 53, 53);
+            border-radius: 50%;
+            width: 16.6px;
+            height: 16.6px;
+            line-height: 16.6px;
+            color: #fff;
+            margin: auto;
+        }
+
+        .ball_2 {
+            background: rgb(104, 53, 53);
+            border-radius: 50%;
+            width: 16.6px;
+            height: 16.6px;
+            line-height: 16.6px;
+            color: #fff;
+            margin: auto;
+        }
+
+        .ball_3 {
+            background: rgb(204, 0, 0);
+            border-radius: 50%;
+            width: 16.6px;
+            height: 16.6px;
+            line-height: 16.6px;
+            color: #fff;
+            margin: auto;
+        }
+
         th {
             padding: 0px !important;
             // margin: 5px !important;

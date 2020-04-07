@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { addCount, reduceCount } from '../../store/actions/countAction';
-import { Layout, Button, Select, Table, Divider, Modal, message, Spin, Avatar } from 'antd';
+import { Layout, Button, Select, Table, Divider, Modal, message, Spin, Avatar, Badge } from 'antd';
 import { UserOutlined, CaretDownOutlined, SearchOutlined } from '@ant-design/icons'
 import cookie from 'react-cookies'
 import axios from 'axios';
@@ -46,37 +46,102 @@ class Trend extends Component {
         this.getTableData()
     }
 
-    //
-    clearSvg = () => {
-        let svg = document.getElementById("chart_svg").getElementsByTagName("svg")
-        for (let i = 0; i < svg.length; i++) {
-            svg[i].style = "display:none"
-        }
-        let svg1 = document.getElementById("chart_svg1").getElementsByTagName("svg")
-        for (let i = 0; i < svg1.length; i++) {
-            svg1[i].style = "display:none"
-        }
-        let svg1_1 = document.getElementById("chart_svg1_1").getElementsByTagName("svg")
-        for (let i = 0; i < svg1_1.length; i++) {
-            svg1_1[i].style = "display:none"
-        }
-        let svg1_2 = document.getElementById("chart_svg1_2").getElementsByTagName("svg")
-        for (let i = 0; i < svg1_2.length; i++) {
-            svg1_2[i].style = "display:none"
-        }
-        let svg2 = document.getElementById("chart_svg2").getElementsByTagName("svg")
-        for (let i = 0; i < svg2.length; i++) {
-            svg2[i].style = "display:none"
-        }
-        let svg3 = document.getElementById("chart_svg3").getElementsByTagName("svg")
-        for (let i = 0; i < svg3.length; i++) {
-            svg3[i].style = "display:none"
-        }
-        let svg4 = document.getElementById("chart_svg4").getElementsByTagName("svg")
-        for (let i = 0; i < svg4.length; i++) {
-            svg4[i].style = "display:none"
-        }
+
+
+    //彩票分类数据
+    getData = () => {
+        this.setState({
+            loading1: true
+        })
+        axios.post(`http://t.f293.cn/api/list`)
+            .then(res => {
+                if (res.data.code === 1) {
+                    this.setState({
+                        headData: res.data.data,
+                        loading1: false
+                    })
+                } else {
+                    message.warning(res.data.msg)
+                }
+            })
     }
+    //开奖时间表格数据
+    getTableData = () => {
+        this.setState({
+            loading: true,
+        })
+        axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
+            axios.get(`http://t.f293.cn/api/get_data?id=1852`)
+                .then(res => {
+                    if (res.data.code === 1) {
+                        this.countTime(res.data.next[1])
+
+                        let newData = []
+                        for (let i = 0; i < res.data.data.length; i++) {
+                            let arr = res.data.data[i].h.split(",")
+                            // let num = res.data.data[i].h.charAt(res.data.data[i].h.length - index)
+                            let num = arr[4]
+                            newData.push({
+                                s: res.data.data[i].s,
+                                q: res.data.data[i].q,
+                                h: num,
+                                arr: res.data.data[i].h,
+                            })
+                        }
+
+
+                        this.setState({
+                            lotteryTime: res.data.next[1],
+                            nextPeriods: res.data.next[0],
+                            dataSource: res.data.data,
+                            loading: false,
+                            newData,
+                        })
+
+                        setTimeout(() => {
+                            this.createSVG()
+
+                        }, 500);
+
+
+                        if (res.data.data[0]) {
+                            this.setState({
+                                lastPeriods: res.data.data[0].q,
+                                lastTime: res.data.data[0].s,
+                                lastResult: res.data.data[0].h.split(","),
+                            })
+                        }
+                    }
+                })
+        })
+
+    }
+
+    //充值
+    buy = () => {
+        // const{}
+        let name = cookie.loadAll().name
+        if (name) {
+            axios.post(`http://t.f293.cn/api/buy`, { name, card: "dd902f27db5061fd874b092f2b3fea87" }).then(res => {
+                if (res.data.code === 1) {
+                    message.success("充值成功")
+                } else {
+                    message.warning(res.data.msg)
+                }
+            })
+        } else {
+            message.warning("请先登录")
+        }
+
+    }
+
+
+    userClick = () => {
+        window.location.href = "/#/login"
+    }
+
+
+    //定位按钮创造数据
     creataData = (index) => {
         this.setState({
             loading: true,
@@ -104,7 +169,7 @@ class Trend extends Component {
                 arr: dataSource[i].h,
             })
         }
-        console.log(newData);
+        // console.log(newData);
         if (index === 0) {
             tableStr = "万"
         }
@@ -128,22 +193,27 @@ class Trend extends Component {
             this.createSVG()
 
         }, 500);
-        console.log(tableStr);
     }
-    //其他
+    //其他按钮创造数据
     changeTable = (crr) => {
         this.setState({
-            columnsIndex: crr
+            columnsIndex: crr,
+            loading: true,
         })
+        setTimeout(() => {
+            this.setState({
+                loading: false
+            })
+        }, 1500);
         this.clearSvg()
 
         const { dataSource } = this.state
-        let tableStr = ""
 
         let newData = []
         for (let i = 0; i < dataSource.length; i++) {
             let arr = dataSource[i].h.split(",")
             // let num = arr[index]
+
             newData.push({
                 s: dataSource[i].s,
                 q: dataSource[i].q,
@@ -153,16 +223,20 @@ class Trend extends Component {
                 h4: arr[3],
                 h5: arr[4],
                 arr: dataSource[i].h,
+
             })
         }
-        console.log(newData);
+        // console.log(newData);
+        setTimeout(() => {
+            this.createFiveSVG()
+
+        }, 500);
         this.setState({
             newData
         })
     }
-
+    //开奖时间倒计时
     countTime = (nextDate) => {
-        const { lotteryTime } = this.state
         //设置截止时间  
         let str = nextDate;
         let endDate = new Date(str);
@@ -209,78 +283,7 @@ class Trend extends Component {
         }
 
     }
-    //彩票分类数据
-    getData = () => {
-        this.setState({
-            loading1: true
-        })
-        axios.post(`http://t.f293.cn/api/list`)
-            .then(res => {
-                if (res.data.code === 1) {
-                    console.log('res=>', res);
-                    this.setState({
-                        headData: res.data.data,
-                        loading1: false
-                    })
-                } else {
-                    message.warning(res.data.msg)
-                }
-            })
-    }
-    //开奖时间表格数据
-    getTableData = () => {
-        this.setState({
-            loading: true,
-        })
-        axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
-            axios.get(`http://t.f293.cn/api/get_data?id=1852`)
-                .then(res => {
-                    console.log('res=>', res);
-                    if (res.data.code === 1) {
-                        this.countTime(res.data.next[1])
-
-                        let newData = []
-                        for (let i = 0; i < res.data.data.length; i++) {
-                            let arr = res.data.data[i].h.split(",")
-                            // let num = res.data.data[i].h.charAt(res.data.data[i].h.length - index)
-                            let num = arr[4]
-                            newData.push({
-                                s: res.data.data[i].s,
-                                q: res.data.data[i].q,
-                                h: num,
-                                arr: res.data.data[i].h,
-                            })
-                        }
-
-
-                        this.setState({
-                            lotteryTime: res.data.next[1],
-                            nextPeriods: res.data.next[0],
-                            dataSource: res.data.data,
-                            loading: false,
-                            newData,
-                        })
-
-                        setTimeout(() => {
-                            this.createSVG()
-
-                        }, 500);
-
-
-                        if (res.data.data[0]) {
-                            this.setState({
-                                lastPeriods: res.data.data[0].q,
-                                lastTime: res.data.data[0].s,
-                                lastResult: res.data.data[0].h.split(","),
-                            })
-                        }
-                    }
-                })
-        })
-
-    }
-
-
+    //创造SVG
     createSVG = () => {
         this.svgTable()
         this.svgTable1()
@@ -290,11 +293,46 @@ class Trend extends Component {
         this.svgTable3()
         this.svgTable4()
     }
-
-
-    userClick = () => {
-        window.location.href = "/#/login"
+    createFiveSVG = () => {
+        this.svgTableFive()
+        this.svgTableFive1()
+        this.svgTableFive2()
+        this.svgTableFive3()
+        this.svgTableFive4()
     }
+    //清除SVG
+    clearSvg = () => {
+        let svg = document.getElementById("chart_svg").getElementsByTagName("svg")
+        for (let i = 0; i < svg.length; i++) {
+            svg[i].style = "display:none"
+        }
+        let svg1 = document.getElementById("chart_svg1").getElementsByTagName("svg")
+        for (let i = 0; i < svg1.length; i++) {
+            svg1[i].style = "display:none"
+        }
+        let svg1_1 = document.getElementById("chart_svg1_1").getElementsByTagName("svg")
+        for (let i = 0; i < svg1_1.length; i++) {
+            svg1_1[i].style = "display:none"
+        }
+        let svg1_2 = document.getElementById("chart_svg1_2").getElementsByTagName("svg")
+        for (let i = 0; i < svg1_2.length; i++) {
+            svg1_2[i].style = "display:none"
+        }
+        let svg2 = document.getElementById("chart_svg2").getElementsByTagName("svg")
+        for (let i = 0; i < svg2.length; i++) {
+            svg2[i].style = "display:none"
+        }
+        let svg3 = document.getElementById("chart_svg3").getElementsByTagName("svg")
+        for (let i = 0; i < svg3.length; i++) {
+            svg3[i].style = "display:none"
+        }
+        let svg4 = document.getElementById("chart_svg4").getElementsByTagName("svg")
+        for (let i = 0; i < svg4.length; i++) {
+            svg4[i].style = "display:none"
+        }
+    }
+
+
     //个位
     svgTable = () => {
         let draw = SVG('chart_svg').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
@@ -394,6 +432,75 @@ class Trend extends Component {
     }
 
 
+
+    //-------------------------------五星走势-----------------------//
+    //万
+    svgTableFive = () => {
+        let draw = SVG('chart_svg').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let ball_1 = document.getElementsByClassName('ball_1');
+        for (let i = 0; i < ball_1.length; i++) {
+            let arrb = [];
+            arrb.push(this.getPosition(ball_1[i], 'left'));
+            arrb.push(this.getPosition(ball_1[i], 'top'));
+            arr.push(arrb);
+        }
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(204, 0, 0)' });
+    }
+    //千
+    svgTableFive1 = () => {
+        let draw = SVG('chart_svg1').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let ball_2 = document.getElementsByClassName('ball_2');
+        for (let i = 0; i < ball_2.length; i++) {
+            let arrb = [];
+            arrb.push(this.getPosition(ball_2[i], 'left'));
+            arrb.push(this.getPosition(ball_2[i], 'top'));
+            arr.push(arrb);
+        }
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(104, 53, 53)' });
+    }
+    //百
+    svgTableFive2 = () => {
+        let draw = SVG('chart_svg2').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let ball_3 = document.getElementsByClassName('ball_3');
+        for (let i = 0; i < ball_3.length; i++) {
+            let arrb = [];
+            arrb.push(this.getPosition(ball_3[i], 'left'));
+            arrb.push(this.getPosition(ball_3[i], 'top'));
+            arr.push(arrb);
+        }
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(204, 0, 0)' });
+    }
+    //十
+    svgTableFive3 = () => {
+        let draw = SVG('chart_svg3').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let ball_4 = document.getElementsByClassName('ball_4');
+        for (let i = 0; i < ball_4.length; i++) {
+            let arrb = [];
+            arrb.push(this.getPosition(ball_4[i], 'left'));
+            arrb.push(this.getPosition(ball_4[i], 'top'));
+            arr.push(arrb);
+        }
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(104, 53, 53)' });
+    }
+    //个
+    svgTableFive4 = () => {
+        let draw = SVG('chart_svg4').size(document.getElementById('tableSvg').offsetWidth, document.getElementById('tableSvg').offsetHeight);
+        let arr = [];
+        let ball_5 = document.getElementsByClassName('ball_5');
+        for (let i = 0; i < ball_5.length; i++) {
+            let arrb = [];
+            arrb.push(this.getPosition(ball_5[i], 'left'));
+            arrb.push(this.getPosition(ball_5[i], 'top'));
+            arr.push(arrb);
+        }
+        // console.log(arr);
+        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(204, 0, 0)' });
+    }
+
     getPosition = (element, name) => {
         // console.log(element, name);
         name = name.toLowerCase().replace("left", "Left").replace("top", "Top");
@@ -427,7 +534,7 @@ class Trend extends Component {
             visible: false
         })
     }
-
+    //和值
     sum = (text) => {
         let a = text.split(",")
         let sum = 0
@@ -436,6 +543,60 @@ class Trend extends Component {
         }
         // console.log(sum);
         return sum
+    }
+    //跨度
+    cutBuy = (text) => {
+        let arr = text.split(",")
+        arr.sort((a, b) => {
+            return a - b
+        })
+        return arr[4] - arr[0]
+    }
+
+    //奇偶比
+    compare1 = (text, record) => {
+        let arr = text.split(",")
+        let a = 0
+        let b = 0
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i] == 1 || arr[i] == 3 || arr[i] == 5 || arr[i] == 7 || arr[i] == 9) {
+                a = a + 1
+            }
+            if (arr[i] == 0 || arr[i] == 2 || arr[i] == 4 || arr[i] == 6 || arr[i] == 8) {
+                b = b + 1
+            }
+        }
+        return a + ":" + b
+    }
+    //大小比
+    compare2 = (text, record) => {
+        let arr = text.split(",")
+        let a = 0
+        let b = 0
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i] == 0 || arr[i] == 1 || arr[i] == 2 || arr[i] == 3 || arr[i] == 4) {
+                a = a + 1
+            }
+            if (arr[i] == 5 || arr[i] == 6 || arr[i] == 7 || arr[i] == 8 || arr[i] == 9) {
+                b = b + 1
+            }
+        }
+        return a + ":" + b
+    }
+    //质和比
+    compare3 = (text, record) => {
+        let arr = text.split(",")
+        let a = 0
+        let b = 0
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i] == 1 || arr[i] == 2 || arr[i] == 3 || arr[i] == 5 || arr[i] == 7) {
+                a = a + 1
+            }
+            if (arr[i] == 0 || arr[i] == 4 || arr[i] == 6 || arr[i] == 8 || arr[i] == 9) {
+                b = b + 1
+            }
+        }
+        return a + ":" + b
     }
 
     //升降
@@ -473,37 +634,9 @@ class Trend extends Component {
         }
     }
 
-    //充值
-    buy = () => {
-        // const{}
-        let name = cookie.loadAll().name
-        console.log(name);
-        if (name) {
-            axios.post(`http://t.f293.cn/api/buy`, { name, card: "dd902f27db5061fd874b092f2b3fea87" }).then(res => {
-                console.log(res);
-                if (res.data.code === 1) {
-                    message.success("充值成功")
-                } else {
-                    message.warning(res.data.msg)
-                }
-            })
-        } else {
-            message.warning("请先登录")
-        }
 
-    }
 
-    //跨度
-    sortMin = (a, b) => {
-        return a - b
-    }
-    cutBuy = (text) => {
-        let arr = text.split(",")
-        arr.sort(this.sortMin)
-        return arr[4] - arr[0]
-    }
-    //
-
+    //五星
     fiveColumns = [
         {
             title: "期号",
@@ -1004,23 +1137,24 @@ class Trend extends Component {
             ]
         },
     ]
+    //五星综合
     fiveAllColumns = [
         {
             title: "期号",
             dataIndex: "q",
-            width: "120px"
+            width: "80px"
         },
         {
             title: "奖号",
             dataIndex: "arr",
-            width: "60px",
+            width: "40px",
             render: (text, record) => text.replace(/,/g, "")
 
         },
         {
             title: "和值",
             dataIndex: "arr",
-            width: "60px",
+            width: "40px",
             render: (text, record) => (
                 this.sum(text, record)
             )
@@ -1028,7 +1162,7 @@ class Trend extends Component {
         {
             title: "跨度",
             dataIndex: "arr",
-            width: "60px",
+            width: "40px",
             render: text => this.cutBuy(text)
         },
         {
@@ -1037,91 +1171,161 @@ class Trend extends Component {
             children: [
                 {
                     title: '0',
-                    dataIndex: 'h1',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let re = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            if (arr[i] == 1) {
+                                re = re + 1
+                            }
+                        }
                         return (
-                            text === "0" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                            re > 0 ? <Badge count={re == 1 ? 0 : re}> <div className={text ? "budge" : null} >1</div> </Badge> : null
                         )
                     },
                 },
                 {
                     title: '1',
-                    dataIndex: 'h1',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let re = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            if (arr[i] == 2) {
+                                re = re + 1
+                            }
+                        }
                         return (
-                            text === "1" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                            re > 0 ? <Badge count={re == 1 ? 0 : re}> <div className={text ? "budge" : null} >2</div> </Badge> : null
                         )
                     },
                 },
                 {
                     title: '2',
-                    dataIndex: 'h1',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let re = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            if (arr[i] == 3) {
+                                re = re + 1
+                            }
+                        }
                         return (
-                            text === "2" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                            re > 0 ? <Badge count={re == 1 ? 0 : re}> <div className={text ? "budge" : null} >3</div> </Badge> : null
                         )
                     },
                 },
                 {
                     title: '3',
-                    dataIndex: 'h1',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let re = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            if (arr[i] == 4) {
+                                re = re + 1
+                            }
+                        }
                         return (
-                            text === "3" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                            re > 0 ? <Badge count={re == 1 ? 0 : re}> <div className={text ? "budge" : null} >4</div> </Badge> : null
                         )
                     },
                 },
                 {
                     title: '4',
-                    dataIndex: 'h1',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let re = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            if (arr[i] == 5) {
+                                re = re + 1
+                            }
+                        }
                         return (
-                            text === "4" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                            re > 0 ? <Badge count={re == 1 ? 0 : re}> <div className={text ? "budge" : null} >5</div> </Badge> : null
                         )
                     },
                 },
                 {
                     title: '5',
-                    dataIndex: 'h1',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let re = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            if (arr[i] == 6) {
+                                re = re + 1
+                            }
+                        }
                         return (
-                            text === "5" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                            re > 0 ? <Badge count={re == 1 ? 0 : re}> <div className={text ? "budge" : null} >6</div> </Badge> : null
                         )
                     },
                 },
                 {
                     title: '6',
-                    dataIndex: 'h1',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let re = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            if (arr[i] == 7) {
+                                re = re + 1
+                            }
+                        }
                         return (
-                            text === "6" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                            re > 0 ? <Badge count={re == 1 ? 0 : re}> <div className={text ? "budge" : null} >7</div> </Badge> : null
                         )
                     },
                 },
                 {
                     title: '7',
-                    dataIndex: 'h1',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let re = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            if (arr[i] == 8) {
+                                re = re + 1
+                            }
+                        }
                         return (
-                            text === "7" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                            re > 0 ? <Badge count={re == 1 ? 0 : re}> <div className={text ? "budge" : null} >8</div> </Badge> : null
                         )
                     },
                 },
                 {
                     title: '8',
-                    dataIndex: 'h1',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let re = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            if (arr[i] == 9) {
+                                re = re + 1
+                            }
+                        }
                         return (
-                            text === "8" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                            re > 0 ? <Badge count={re == 1 ? 0 : re}> <div className={text ? "budge" : null} >9</div> </Badge> : null
                         )
                     },
                 },
                 {
                     title: '9',
-                    dataIndex: 'h1',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let re = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            if (arr[i] == 0) {
+                                re = re + 1
+                            }
+                        }
                         return (
-                            text === "9" ? <div className={text ? "ball_1" : null} >{text}</div> : null
+                            re > 9 ? <Badge count={re == 1 ? 0 : re}> <div className={text ? "budge" : null} >9</div> </Badge> : null
                         )
                     },
                 },
@@ -1131,14 +1335,19 @@ class Trend extends Component {
         {
             title: "和值尾号",
             dataIndex: "h",
-            width: "60px",
             children: [
                 {
                     title: '0',
-                    dataIndex: 'h2',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let sum = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            sum = sum + Number(arr[i])
+                        }
+                        let last = String(sum)[String(sum).length - 1]
                         return (
-                            text === "0" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                            last === "0" ? <div className={last ? "ball_2" : null} >{last}</div> : null
                         )
                     },
                 },
@@ -1146,8 +1355,14 @@ class Trend extends Component {
                     title: '1',
                     dataIndex: 'h2',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let sum = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            sum = sum + Number(arr[i])
+                        }
+                        let last = String(sum)[String(sum).length - 1]
                         return (
-                            text === "1" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                            last === "1" ? <div className={last ? "ball_2" : null} >{last}</div> : null
                         )
                     },
                 },
@@ -1155,8 +1370,14 @@ class Trend extends Component {
                     title: '2',
                     dataIndex: 'h2',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let sum = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            sum = sum + Number(arr[i])
+                        }
+                        let last = String(sum)[String(sum).length - 1]
                         return (
-                            text === "2" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                            last === "2" ? <div className={last ? "ball_2" : null} >{last}</div> : null
                         )
                     },
                 },
@@ -1164,8 +1385,14 @@ class Trend extends Component {
                     title: '3',
                     dataIndex: 'h2',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let sum = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            sum = sum + Number(arr[i])
+                        }
+                        let last = String(sum)[String(sum).length - 1]
                         return (
-                            text === "3" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                            last === "3" ? <div className={last ? "ball_2" : null} >{last}</div> : null
                         )
                     },
                 },
@@ -1173,8 +1400,14 @@ class Trend extends Component {
                     title: '4',
                     dataIndex: 'h2',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let sum = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            sum = sum + Number(arr[i])
+                        }
+                        let last = String(sum)[String(sum).length - 1]
                         return (
-                            text === "4" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                            last === "4" ? <div className={last ? "ball_2" : null} >{last}</div> : null
                         )
                     },
                 },
@@ -1182,8 +1415,14 @@ class Trend extends Component {
                     title: '5',
                     dataIndex: 'h2',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let sum = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            sum = sum + Number(arr[i])
+                        }
+                        let last = String(sum)[String(sum).length - 1]
                         return (
-                            text === "5" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                            last === "5" ? <div className={last ? "ball_2" : null} >{last}</div> : null
                         )
                     },
                 },
@@ -1191,8 +1430,14 @@ class Trend extends Component {
                     title: '6',
                     dataIndex: 'h2',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let sum = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            sum = sum + Number(arr[i])
+                        }
+                        let last = String(sum)[String(sum).length - 1]
                         return (
-                            text === "6" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                            last === "6" ? <div className={last ? "ball_2" : null} >{last}</div> : null
                         )
                     },
                 },
@@ -1200,8 +1445,14 @@ class Trend extends Component {
                     title: '7',
                     dataIndex: 'h2',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let sum = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            sum = sum + Number(arr[i])
+                        }
+                        let last = String(sum)[String(sum).length - 1]
                         return (
-                            text === "7" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                            last === "7" ? <div className={last ? "ball_2" : null} >{last}</div> : null
                         )
                     },
                 },
@@ -1209,8 +1460,14 @@ class Trend extends Component {
                     title: '8',
                     dataIndex: 'h2',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let sum = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            sum = sum + Number(arr[i])
+                        }
+                        let last = String(sum)[String(sum).length - 1]
                         return (
-                            text === "8" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                            last === "8" ? <div className={last ? "ball_2" : null} >{last}</div> : null
                         )
                     },
                 },
@@ -1218,8 +1475,14 @@ class Trend extends Component {
                     title: '9',
                     dataIndex: 'h2',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        let sum = 0
+                        for (let i = 0; i < arr.length; i++) {
+                            sum = sum + Number(arr[i])
+                        }
+                        let last = String(sum)[String(sum).length - 1]
                         return (
-                            text === "9" ? <div className={text ? "ball_2" : null} >{text}</div> : null
+                            last === "9" ? <div className={last ? "ball_2" : null} >{last}</div> : null
                         )
                     },
                 },
@@ -1232,91 +1495,141 @@ class Trend extends Component {
             children: [
                 {
                     title: '0',
-                    dataIndex: 'h3',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        arr.sort((a, b) => {
+                            return a - b
+                        })
+                        let cutBuynum = arr[4] - arr[0]
                         return (
-                            text === "0" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                            cutBuynum == "0" ? <div className={cutBuynum ? "ball_3" : null} >{cutBuynum}</div> : null
                         )
                     },
                 },
                 {
                     title: '1',
-                    dataIndex: 'h3',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        arr.sort((a, b) => {
+                            return a - b
+                        })
+                        let cutBuynum = arr[4] - arr[0]
                         return (
-                            text === "1" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                            cutBuynum == "1" ? <div className={cutBuynum ? "ball_3" : null} >{cutBuynum}</div> : null
                         )
                     },
                 },
                 {
                     title: '2',
-                    dataIndex: 'h3',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        arr.sort((a, b) => {
+                            return a - b
+                        })
+                        let cutBuynum = arr[4] - arr[0]
                         return (
-                            text === "2" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                            cutBuynum == "2" ? <div className={cutBuynum ? "ball_3" : null} >{cutBuynum}</div> : null
                         )
                     },
                 },
                 {
                     title: '3',
-                    dataIndex: 'h3',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        arr.sort((a, b) => {
+                            return a - b
+                        })
+                        let cutBuynum = arr[4] - arr[0]
                         return (
-                            text === "3" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                            cutBuynum == "3" ? <div className={cutBuynum ? "ball_3" : null} >{cutBuynum}</div> : null
                         )
                     },
                 },
                 {
                     title: '4',
-                    dataIndex: 'h3',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        arr.sort((a, b) => {
+                            return a - b
+                        })
+                        let cutBuynum = arr[4] - arr[0]
                         return (
-                            text === "4" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                            cutBuynum == "4" ? <div className={cutBuynum ? "ball_3" : null} >{cutBuynum}</div> : null
                         )
                     },
                 },
                 {
                     title: '5',
-                    dataIndex: 'h3',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        arr.sort((a, b) => {
+                            return a - b
+                        })
+                        let cutBuynum = arr[4] - arr[0]
                         return (
-                            text === "5" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                            cutBuynum == "5" ? <div className={cutBuynum ? "ball_3" : null} >{cutBuynum}</div> : null
                         )
                     },
                 },
                 {
                     title: '6',
-                    dataIndex: 'h3',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        arr.sort((a, b) => {
+                            return a - b
+                        })
+                        let cutBuynum = arr[4] - arr[0]
                         return (
-                            text === "6" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                            cutBuynum == "6" ? <div className={cutBuynum ? "ball_3" : null} >{cutBuynum}</div> : null
                         )
                     },
                 },
                 {
                     title: '7',
-                    dataIndex: 'h3',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        arr.sort((a, b) => {
+                            return a - b
+                        })
+                        let cutBuynum = arr[4] - arr[0]
                         return (
-                            text === "7" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                            cutBuynum == "7" ? <div className={cutBuynum ? "ball_3" : null} >{cutBuynum}</div> : null
                         )
                     },
                 },
                 {
                     title: '8',
-                    dataIndex: 'h3',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        arr.sort((a, b) => {
+                            return a - b
+                        })
+                        let cutBuynum = arr[4] - arr[0]
                         return (
-                            text === "8" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                            cutBuynum == "8" ? <div className={cutBuynum ? "ball_3" : null} >{cutBuynum}</div> : null
                         )
                     },
                 },
                 {
                     title: '9',
-                    dataIndex: 'h3',
+                    dataIndex: 'arr',
                     render: (text, record, index) => {
+                        let arr = text.split(",")
+                        arr.sort((a, b) => {
+                            return a - b
+                        })
+                        let cutBuynum = arr[4] - arr[0]
                         return (
-                            text === "9" ? <div className={text ? "ball_3" : null} >{text}</div> : null
+                            cutBuynum == "9" ? <div className={cutBuynum ? "ball_3" : null} >{cutBuynum}</div> : null
                         )
                     },
                 },
@@ -1326,25 +1639,25 @@ class Trend extends Component {
         {
             title: "奇偶比",
             dataIndex: "arr",
-            width: "60px",
+            width: "40px",
             render: (text, record) => (
-                this.sum(text, record)
+                this.compare1(text, record)
             )
         },
         {
             title: "大小比",
             dataIndex: "arr",
-            width: "60px",
+            width: "40px",
             render: (text, record) => (
-                this.sum(text, record)
+                this.compare2(text, record)
             )
         },
         {
             title: "质合比",
             dataIndex: "arr",
-            width: "60px",
+            width: "40px",
             render: (text, record) => (
-                this.sum(text, record)
+                this.compare3(text, record)
             )
         },
     ]
@@ -1946,14 +2259,6 @@ class Trend extends Component {
                         onCancel={this.handleCancel}
                         footer={false}
                         className="trendSort"
-                    // okText="确定"
-                    // cancelText="取消"
-                    // footer={
-                    //     <div>
-                    //         <Button type="primary" style={{ fontSize: "xx-large", height: "60px" }}>确定</Button>
-                    //         <Button style={{ fontSize: "xx-large", height: "60px" }}>取消</Button>
-                    //     </div>
-                    // }
                     >
                         <p style={{ fontSize: "x-large" }}>实时彩类</p>
                         <div>
