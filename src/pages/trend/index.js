@@ -237,6 +237,44 @@ class Trend extends Component {
             newData
         })
     }
+    //大小单双
+    creataBMData = (index) => {
+        this.setState({
+            columnsIndex: index,
+            loading: true,
+        })
+        setTimeout(() => {
+            this.setState({
+                loading: false
+            })
+        }, 1500);
+        this.clearSvg()
+
+        const { dataSource } = this.state
+
+        let newData = []
+        for (let i = 0; i < dataSource.length; i++) {
+            let arr = dataSource[i].h.split(",")
+            // let num = arr[index]
+
+            newData.push({
+                s: dataSource[i].s,
+                q: dataSource[i].q,
+                h: arr[3] + arr[4],
+
+            })
+        }
+        console.log(newData);
+        setTimeout(() => {
+            this.createSVG()
+
+        }, 500);
+        this.setState({
+            newData
+        })
+    }
+
+
     //开奖时间倒计时
     countTime = (nextDate) => {
         //设置截止时间  
@@ -1665,6 +1703,359 @@ class Trend extends Component {
             )
         },
     ]
+    //大小单双
+    bigOrSmallColumns = [
+        {
+            title: "期号",
+            dataIndex: "q",
+            width: "80px"
+        },
+        {
+            title: "奖号",
+            dataIndex: "h",
+            width: "40px",
+            // render: (text, record) => text.replace(/,/g, "")
+
+        },
+        {
+            title: "和值",
+            dataIndex: "h",
+            width: "40px",
+            render: (text, record) => (
+                Number(text[0]) + Number(text[1])
+            )
+        },
+        {
+            title: "跨度",
+            dataIndex: "h",
+            width: "40px",
+            render: text => (
+                Math.abs(Number(text[0]) - Number(text[1]))
+            )
+        },
+        {
+            title: "十位",
+            dataIndex: "",
+            children: [
+                {
+                    title: "大",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        if (a >= 5) {
+                            return (
+                                <div className="shape">大</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "小",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        if (a < 5) {
+                            return (
+                                <div className="shape">小</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "单",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        if (a === 1 || a === 3 || a === 5 || a === 7 || a === 9) {
+                            return (
+                                <div className="prime">单</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "双",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        if (a === 0 || a === 2 || a === 4 || a === 6 || a === 8) {
+                            return (
+                                <div className="prime">双</div>
+                            )
+                        }
+                    }
+                },
+            ]
+        },
+        {
+            title: "个位",
+            dataIndex: "arr",
+            children: [
+                {
+                    title: "大",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[1])
+                        if (a >= 5) {
+                            return (
+                                <div className="amplitude">大</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "小",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[1])
+                        if (a < 5) {
+                            return (
+                                <div className="amplitude">小</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "单",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[1])
+                        if (a === 1 || a === 3 || a === 5 || a === 7 || a === 9) {
+                            return (
+                                <div className="parity">单</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "双",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[1])
+                        if (a === 0 || a === 2 || a === 4 || a === 6 || a === 8) {
+                            return (
+                                <div className="parity">双</div>
+                            )
+                        }
+                    }
+                },
+            ]
+        },
+        {
+            title: "大小单双位置分布",
+            dataIndex: "arr",
+            children: [
+                {
+                    title: "大大",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if (a >= 5 && b >= 5) {
+                            return (
+                                <div className="">大大</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "大小",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if (a >= 5 && b < 5) {
+                            return (
+                                <div className="">大小</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "大单",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if (a >= 5 && (b === 1 || b === 3 || b === 5 || b === 7 || b === 9)) {
+                            return (
+                                <div className="">大单</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "大双",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if (a >= 5 && (b === 0 || b === 2 || b === 4 || b === 6 || b === 8)) {
+                            return (
+                                <div className="">大双</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "小大",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if (a < 5 && b >= 5) {
+                            return (
+                                <div className="">小大</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "小小",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if (a < 5 && b < 5) {
+                            return (
+                                <div className="">小小</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "小单",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if (a < 5 && (b === 1 || b === 3 || b === 5 || b === 7 || b === 9)) {
+                            return (
+                                <div className="">小单</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "小双",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if (a < 5 && (b === 0 || b === 2 || b === 4 || b === 6 || b === 8)) {
+                            return (
+                                <div className="">小双</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "单大",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if ((a === 1 || a === 3 || a === 5 || a === 7 || a === 9) && b >= 5) {
+                            return (
+                                <div className="">单大</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "单小",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if ((a === 1 || a === 3 || a === 5 || a === 7 || a === 9) && b < 5) {
+                            return (
+                                <div className="">单小</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "单单",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if ((a === 1 || a === 3 || a === 5 || a === 7 || a === 9) && (b === 1 || b === 3 || b === 5 || b === 7 || b === 9)) {
+                            return (
+                                <div className="">单单</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "单双",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if ((a === 1 || a === 3 || a === 5 || a === 7 || a === 9) && (b === 0 || b === 2 || b === 4 || b === 6 || b === 8)) {
+                            return (
+                                <div className="">单双</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "双大",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if ((a === 0 || a === 2 || a === 4 || a === 6 || a === 8) && b >= 5) {
+                            return (
+                                <div className="">双大</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "双小",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if ((a === 0 || a === 2 || a === 4 || a === 6 || a === 8) && b < 5) {
+                            return (
+                                <div className="">双小</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "双单",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if ((a === 0 || a === 2 || a === 4 || a === 6 || a === 8) && (b === 1 || b === 3 || b === 5 || b === 7 || b === 9)) {
+                            return (
+                                <div className="">双单</div>
+                            )
+                        }
+                    }
+                },
+                {
+                    title: "双双",
+                    dataIndex: "h",
+                    render: text => {
+                        let a = Number(text[0])
+                        let b = Number(text[1])
+                        if ((a === 0 || a === 2 || a === 4 || a === 6 || a === 8) && (b === 0 || b === 2 || b === 4 || b === 6 || b === 8)) {
+                            return (
+                                <div className="">双双</div>
+                            )
+                        }
+                    }
+                },
+            ]
+        },
+    ]
 
     render() {
         const { loading, loading1, dataSource, h, m, s, nextPeriods, lastPeriods, lastTime, lastResult, newData } = this.state
@@ -2191,7 +2582,7 @@ class Trend extends Component {
                                 <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
                                 <Button onClick={() => this.creataData(4)} style={{ fontSize: "xx-large", height: "80px" }} type="link">个位</Button>
                                 <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <Button onClick={() => this.creataData(5)} style={{ fontSize: "xx-large", height: "80px" }} type="link">大小单双</Button>
+                                <Button onClick={() => this.creataBMData(6)} style={{ fontSize: "xx-large", height: "80px" }} type="link">大小单双</Button>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between", height: "80px", lineHeight: "80px", margin: "20px 0" }}>
                                 <div className="firstWord">其他</div>
@@ -2225,15 +2616,24 @@ class Trend extends Component {
                                             bordered
                                             pagination={false}
                                             dataSource={newData}
-                                        /> :
-                                        <Table
-                                            columns={columns}
-                                            className="list"
-                                            rowKey={"q"}
-                                            bordered
-                                            pagination={false}
-                                            dataSource={newData}
-                                        />
+                                        /> : this.state.columnsIndex === 6 ?
+                                            <Table
+                                                columns={this.bigOrSmallColumns}
+                                                className="list"
+                                                rowKey={"q"}
+                                                bordered
+                                                pagination={false}
+                                                dataSource={newData}
+                                            />
+                                            :
+                                            <Table
+                                                columns={columns}
+                                                className="list"
+                                                rowKey={"q"}
+                                                bordered
+                                                pagination={false}
+                                                dataSource={newData}
+                                            />
                             }
 
 
