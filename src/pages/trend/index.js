@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { addCount, reduceCount } from '../../store/actions/countAction';
 import { Layout, Button, Select, Table, Divider, Modal, message, Spin, Avatar, Badge } from 'antd';
 import { UserOutlined, CaretDownOutlined, SearchOutlined } from '@ant-design/icons'
+import { Link } from 'react-router-dom'
 import cookie from 'react-cookies'
 import axios from 'axios';
 import SVG from "svg.js"
@@ -137,7 +138,8 @@ class Trend extends Component {
 
 
     userClick = () => {
-        window.location.href = "/#/login"
+        // window.location.href = "/#/login"
+        this.props.history.push('/login')
     }
 
 
@@ -272,7 +274,9 @@ class Trend extends Component {
                 }, 200);
             } else {
                 // this.getTableData()
-                window.location.href = '/'
+                // window.location.href = '/'
+                this.props.history.push('/')
+
             }
         } else {
             this.setState({

@@ -1,11 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import RouterLink from './router/index'
-// import App from './App';
-import Login from './login'
-import Trend from './pages/trend'
-import { createStore } from 'redux';
-import { Provider, connect } from 'react-redux';
+import { Provider } from 'react-redux';
 import store from './store'
 import './index.css';
 import * as serviceWorker from './serviceWorker';
@@ -18,7 +14,7 @@ ReactDOM.render(
     </Provider>
   // </React.StrictMode>
   ,
-  document.getElementById('root',console.log(store))
+  document.getElementById('root')
 );
 
 serviceWorker.unregister();

@@ -33,7 +33,9 @@ export default class Login extends Component {
                     this.setState({
                         logonLoading: false
                     })
-                    window.location.href = "/#/login"
+                    // window.location.href = "/#/login"
+                    this.props.history.push('/login')
+
                 } else {
                     message.warning(res.data.msg)
                     this.setState({
@@ -87,7 +89,7 @@ export default class Login extends Component {
                             <Button type="primary" onClick={this.onSubmit} htmlType="submit">注册</Button>
                         </Form.Item>
                     </Form>
-                    <Button type="link" style={{ textAlign: "right", width: "100%" }} onClick={() => { window.location.href = "/#/login" }} >返回登录</Button>
+                    <Button type="link" style={{ textAlign: "right", width: "100%" }} onClick={() => { this.props.history.push('/login') }} >返回登录</Button>
 
                 </div>
             </Spin>

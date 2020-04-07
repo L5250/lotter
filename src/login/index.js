@@ -27,7 +27,6 @@ export default class Login extends Component {
             loginLoading: true
         })
         console.log('Success:', values);
-        // window.location.href = "/"
         // localStorage.setItem("token",111)
         axios.post(`http://t.f293.cn/api/login`, values)
             .then(res => {
@@ -37,7 +36,9 @@ export default class Login extends Component {
                     cookie.save('name', res.data.user_info.name)
                     // localStorage.setItem("name", res.data.user_info.name)
                     // localStorage.setItem("id", res.data.user_info.id)
-                    window.location.href = "/"
+                    // window.location.href = "/"
+                    this.props.history.push('/')
+
                     this.setState({
                         loginLoading: false
                     })
@@ -89,7 +90,7 @@ export default class Login extends Component {
                             <Button type="primary" onClick={this.onSubmit} htmlType="submit">登录</Button>
                         </Form.Item>
                     </Form>
-                    <Button type="link" style={{ textAlign: "right", width: "100%" }} onClick={() => { window.location.href = "/#/logon" }} >没有账号，去注册</Button>
+                    <Button type="link" style={{ textAlign: "right", width: "100%" }} onClick={() => { this.props.history.push('/logon') }} >没有账号，去注册</Button>
 
                 </div>
             </Spin>
