@@ -44,6 +44,8 @@ class Trend extends Component {
         card: "",
         id: "",
 
+        isTime: true,
+
     }
     componentDidMount() {
         this.getData()
@@ -138,18 +140,19 @@ class Trend extends Component {
 
     }
 
-
+    //切换彩种
     changeTableData = (id) => {
         this.setState({
-            // loading: true,
+            loading: true,
             visible: false,
-            columnsIndex: 0,
+            // columnsIndex: 0,
             newData: [],
             nextPeriods: "",//下期期号
             lotteryTime: '',//下期开奖时间
             h: "00",
             m: "00",
             s: "00",
+            isTime: false,
             id
         })
         this.clearSvg()
@@ -191,6 +194,7 @@ class Trend extends Component {
                             newData,
                             tableStr: "个",
                             columnsIndex: 0,
+                            isTime: true,
 
                         })
                         setTimeout(() => {
@@ -356,7 +360,12 @@ class Trend extends Component {
             newData
         })
     }
-
+    //倒计时
+    timeOut = () => {
+        const { lotteryTime } = this.state
+        console.log(lotteryTime);
+        return lotteryTime
+    }
 
     //开奖时间倒计时
     countTime = (nextDate) => {
@@ -365,7 +374,7 @@ class Trend extends Component {
         let endDate = new Date(str);
         let end = endDate.getTime();
         // console.log(end);
-        if (end && end > 0) {
+        if (end && end > 0 && this.state.isTime) {
             //获取当前时间  
             let date = new Date();
             let now = date.getTime();
@@ -384,6 +393,8 @@ class Trend extends Component {
                     axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
 
                     })
+                }
+                if (h == 0 && m == 0 && s == 0) {
                     this.clearSvg()
                 }
                 this.setState({
@@ -393,10 +404,12 @@ class Trend extends Component {
                 })
                 setTimeout(() => {
                     this.countTime(nextDate)
-                }, 200);
+                }, 100);
                 // console.log(h, m, s);
             } else {
-                this.changeTableData(this.state.id)
+                setTimeout(() => {
+                    this.changeTableData(this.state.id)
+                }, 3000);
                 // this.props.history.push('/')
 
             }
@@ -428,33 +441,33 @@ class Trend extends Component {
     }
     //清除SVG
     clearSvg = () => {
-        let svg = document.getElementById("chart_svg").getElementsByTagName("svg")
-        for (let i = 0; i < svg.length; i++) {
-            svg[i].style = "display:none"
+        let svg = document.getElementById("chart_svg")
+        if (svg.hasChildNodes()) {
+            svg.removeChild(svg.lastChild);
         }
-        let svg1 = document.getElementById("chart_svg1").getElementsByTagName("svg")
-        for (let i = 0; i < svg1.length; i++) {
-            svg1[i].style = "display:none"
+        let svg1 = document.getElementById("chart_svg1")
+        if (svg1.hasChildNodes()) {
+            svg1.removeChild(svg1.lastChild);
         }
-        let svg1_1 = document.getElementById("chart_svg1_1").getElementsByTagName("svg")
-        for (let i = 0; i < svg1_1.length; i++) {
-            svg1_1[i].style = "display:none"
+        let svg1_1 = document.getElementById("chart_svg1_1")
+        if (svg1_1.hasChildNodes()) {
+            svg1_1.removeChild(svg1_1.lastChild);
         }
-        let svg1_2 = document.getElementById("chart_svg1_2").getElementsByTagName("svg")
-        for (let i = 0; i < svg1_2.length; i++) {
-            svg1_2[i].style = "display:none"
+        let svg1_2 = document.getElementById("chart_svg1_2")
+        if (svg1_2.hasChildNodes()) {
+            svg1_2.removeChild(svg1_2.lastChild);
         }
-        let svg2 = document.getElementById("chart_svg2").getElementsByTagName("svg")
-        for (let i = 0; i < svg2.length; i++) {
-            svg2[i].style = "display:none"
+        let svg2 = document.getElementById("chart_svg2")
+        if (svg2.hasChildNodes()) {
+            svg2.removeChild(svg2.lastChild);
         }
-        let svg3 = document.getElementById("chart_svg3").getElementsByTagName("svg")
-        for (let i = 0; i < svg3.length; i++) {
-            svg3[i].style = "display:none"
+        let svg3 = document.getElementById("chart_svg3")
+        if (svg3.hasChildNodes()) {
+            svg3.removeChild(svg3.lastChild);
         }
-        let svg4 = document.getElementById("chart_svg4").getElementsByTagName("svg")
-        for (let i = 0; i < svg4.length; i++) {
-            svg4[i].style = "display:none"
+        let svg4 = document.getElementById("chart_svg4")
+        if (svg4.hasChildNodes()) {
+            svg4.removeChild(svg4.lastChild);
         }
     }
 
@@ -2660,19 +2673,22 @@ class Trend extends Component {
                             </div>
                         </div>
                         <div style={{ height: "100px", lineHeight: "100px", padding: "0 50px" }}>
-                            <span style={{}}>第
-                            <span style={{ fontSize: "50px", color: "#f7833b" }}>{nextPeriods}</span>
-                             期
-                             </span>
+                            <span>
+                                <span>第</span>
+                                <span style={{ fontSize: "50px", color: "#f7833b", margin: "0 20px" }}>{nextPeriods}</span>
+                                <span>期</span>
+                            </span>
                             <span style={{ margin: "0 20px" }}>距开奖
-                                <span style={{ fontSize: "50px", color: "#f7833b" }}>{h}:{m}:{s} </span>
+                                <span style={{ fontSize: "50px", color: "#f7833b", margin: "0 20px" }}>
+                                    {h}:{m}:{s}
+                                </span>
                             </span>
                         </div>
                         <Divider style={{ margin: "5px 0", background: "#ccc" }} />
                         <div style={{ height: "100px", lineHeight: "100px", display: "flex", padding: "0 40px", fontSize: "large" }}>
                             <div style={{ marginRight: "20px" }}>
                                 <span>第</span>
-                                <span style={{ margin: "0 10px" }}>{lastPeriods}</span>
+                                <span style={{ margin: "0 20px" }}>{lastPeriods}</span>
                                 <span>期结果</span>
                             </div>
                             {
