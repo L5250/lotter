@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { addCount, reduceCount } from '../../store/actions/countAction';
-import { Layout, Button, Select, Table, Divider, Modal, message, Spin, Avatar, Badge } from 'antd';
+import { Layout, Button, Select, Table, Divider, Modal, message, Spin, Avatar, Badge, Input } from 'antd';
 import { UserOutlined, CaretDownOutlined, SearchOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import cookie from 'react-cookies'
@@ -18,6 +18,7 @@ class Trend extends Component {
     }
     state = {
         visible: false,
+        buyVisible: false,
         headData: [],
         mainLoaing: false,
 
@@ -38,13 +39,15 @@ class Trend extends Component {
         lastTime: "",//上期时间
         lastResult: [],//上期结果
 
-        columnsIndex: 0
+        columnsIndex: 0,
 
+        card: "",
+        id: "",
 
     }
     componentDidMount() {
         this.getData()
-        this.getTableData()
+        // this.getTableData()
     }
 
 
@@ -59,23 +62,33 @@ class Trend extends Component {
                 if (res.data.code === 1) {
                     this.setState({
                         headData: res.data.data,
-                        loading1: false
+                        loading1: false,
                     })
+                    if (res.data.data[0]) {
+                        this.setState({
+                            id: res.data.data[0].id
+                        })
+                        this.getTableData(res.data.data[0].id)
+
+                    }
                 } else {
                     message.warning(res.data.msg)
                 }
             })
     }
     //开奖时间表格数据
-    getTableData = () => {
+    getTableData = (id) => {
         this.setState({
             loading: true,
+            visible: false,
+            columnsIndex: 0,
+            id
         })
+        this.clearSvg()
         axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
-            axios.get(`http://t.f293.cn/api/get_data?id=1852`)
+            axios.get(`http://t.f293.cn/api/get_data?id=${id}`)
                 .then(res => {
                     if (res.data.code === 1) {
-                        this.countTime(res.data.next[1])
 
                         let newData = []
                         for (let i = 0; i < res.data.data.length; i++) {
@@ -100,7 +113,14 @@ class Trend extends Component {
                         })
 
                         setTimeout(() => {
-                            this.createSVG()
+                            if (this.state.columnsIndex == 0 || this.state.columnsIndex == 6) {
+                                this.countTime(res.data.next[1])
+
+                                this.createSVG()
+                            } else {
+
+                                this.createFiveSVG()
+                            }
 
                         }, 500);
 
@@ -118,12 +138,76 @@ class Trend extends Component {
 
     }
 
+
+    changeTableData = (id) => {
+        this.setState({
+            // loading: true,
+            visible: false,
+            columnsIndex: 0,
+            newData: [],
+            nextPeriods: "",//下期期号
+            lotteryTime: '',//下期开奖时间
+            h: "00",
+            m: "00",
+            s: "00",
+            id
+        })
+        this.clearSvg()
+        axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
+            axios.get(`http://t.f293.cn/api/get_data?id=${id}`)
+                .then(res => {
+                    if (res.data.code === 1) {
+                        console.log(res.data);
+                        this.setState({
+                            loading: true,
+                            dataSource: res.data.data,
+                            lotteryTime: res.data.next[1],
+                            nextPeriods: res.data.next[0],
+
+                        })
+                        setTimeout(() => {
+                            this.setState({
+                                loading: false
+                            })
+                        }, 1500);
+                        // this.clearSvg()
+
+                        let dataSource = res.data.data
+                        console.log(dataSource);
+
+                        let newData = []
+                        for (let i = 0; i < dataSource.length; i++) {
+                            let arr = dataSource[i].h.split(",")
+                            let num = arr[4]
+                            newData.push({
+                                s: dataSource[i].s,
+                                q: dataSource[i].q,
+                                h: num,
+                                arr: dataSource[i].h,
+                            })
+                        }
+
+                        this.setState({
+                            newData,
+                            tableStr: "个",
+                            columnsIndex: 0,
+
+                        })
+                        setTimeout(() => {
+                            this.createSVG()
+                            this.countTime(res.data.next[1])
+                        }, 500);
+                    }
+                })
+        })
+    }
+
     //充值
     buy = () => {
-        // const{}
+        const { card } = this.state
         let name = cookie.loadAll().name
         if (name) {
-            axios.post(`http://t.f293.cn/api/buy`, { name, card: "dd902f27db5061fd874b092f2b3fea87" }).then(res => {
+            axios.post(`http://t.f293.cn/api/buy`, { name, card }).then(res => {
                 if (res.data.code === 1) {
                     message.success("充值成功")
                 } else {
@@ -264,7 +348,6 @@ class Trend extends Component {
 
             })
         }
-        console.log(newData);
         setTimeout(() => {
             this.createSVG()
 
@@ -301,6 +384,7 @@ class Trend extends Component {
                     axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
 
                     })
+                    this.clearSvg()
                 }
                 this.setState({
                     h: h < 10 ? "0" + h : h,
@@ -310,10 +394,10 @@ class Trend extends Component {
                 setTimeout(() => {
                     this.countTime(nextDate)
                 }, 200);
+                // console.log(h, m, s);
             } else {
-                // this.getTableData()
-                // window.location.href = '/'
-                this.props.history.push('/')
+                this.changeTableData(this.state.id)
+                // this.props.history.push('/')
 
             }
         } else {
@@ -390,7 +474,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_9Arr[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(204, 0, 0)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
     }
     //个位形态分布
     //大小
@@ -404,7 +488,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(shape[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(248, 99, 0)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(248, 99, 0)' });
     }
     //奇偶
     svgTable1a = () => {
@@ -417,7 +501,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(parity[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(42, 82, 127)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(42, 82, 127)' });
     }
     //质和
     svgTable1b = () => {
@@ -430,7 +514,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(prime[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(105, 131, 83)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(105, 131, 83)' });
     }
     //
     //个位012路
@@ -444,7 +528,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(bit[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(0, 135, 34)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(0, 135, 34)' });
     }
     // 个位生平降
     svgTable3 = () => {
@@ -457,7 +541,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(lifting[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(248, 99, 0)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(248, 99, 0)' });
     }
     //个位振幅
     svgTable4 = () => {
@@ -470,7 +554,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(amplitude[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(30, 136, 238)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(30, 136, 238)' });
     }
 
 
@@ -487,7 +571,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_1[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(204, 0, 0)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
     }
     //千
     svgTableFive1 = () => {
@@ -500,7 +584,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_2[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(104, 53, 53)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(104, 53, 53)' });
     }
     //百
     svgTableFive2 = () => {
@@ -513,7 +597,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_3[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(204, 0, 0)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
     }
     //十
     svgTableFive3 = () => {
@@ -526,7 +610,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_4[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(104, 53, 53)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(104, 53, 53)' });
     }
     //个
     svgTableFive4 = () => {
@@ -540,7 +624,7 @@ class Trend extends Component {
             arr.push(arrb);
         }
         // console.log(arr);
-        draw.polyline(arr).fill('none').stroke({ width: 2, color: 'rgb(204, 0, 0)' });
+        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
     }
 
     getPosition = (element, name) => {
@@ -571,9 +655,33 @@ class Trend extends Component {
             visible: true
         })
     }
+    openBuy = () => {
+        let name = cookie.loadAll().name
+        if (name) {
+            this.setState({
+                buyVisible: true
+            })
+        } else {
+            message.warning("请先登录")
+        }
+
+    }
     handleCancel = () => {
         this.setState({
             visible: false
+        })
+    }
+    handleCancel1 = () => {
+        this.setState({
+            buyVisible: false
+        })
+    }
+
+    cardChange = (e) => {
+        let value = e.target.value
+        console.log(value);
+        this.setState({
+            card: value
         })
     }
     //和值
@@ -1847,208 +1955,224 @@ class Trend extends Component {
             children: [
                 {
                     title: "大大",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if (a >= 5 && b >= 5) {
                             return (
-                                <div className="">大大</div>
+                                <div className="po_bag_word">大大</div>
                             )
                         }
                     }
                 },
                 {
                     title: "大小",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if (a >= 5 && b < 5) {
                             return (
-                                <div className="">大小</div>
+                                <div className="po_bag_word">大小</div>
                             )
                         }
                     }
                 },
                 {
                     title: "大单",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if (a >= 5 && (b === 1 || b === 3 || b === 5 || b === 7 || b === 9)) {
                             return (
-                                <div className="">大单</div>
+                                <div className="po_bag_word">大单</div>
                             )
                         }
                     }
                 },
                 {
                     title: "大双",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if (a >= 5 && (b === 0 || b === 2 || b === 4 || b === 6 || b === 8)) {
                             return (
-                                <div className="">大双</div>
+                                <div className="po_bag_word">大双</div>
                             )
                         }
                     }
                 },
                 {
                     title: "小大",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if (a < 5 && b >= 5) {
                             return (
-                                <div className="">小大</div>
+                                <div className="po_bag_word">小大</div>
                             )
                         }
                     }
                 },
                 {
                     title: "小小",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if (a < 5 && b < 5) {
                             return (
-                                <div className="">小小</div>
+                                <div className="po_bag_word">小小</div>
                             )
                         }
                     }
                 },
                 {
                     title: "小单",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if (a < 5 && (b === 1 || b === 3 || b === 5 || b === 7 || b === 9)) {
                             return (
-                                <div className="">小单</div>
+                                <div className="po_bag_word">小单</div>
                             )
                         }
                     }
                 },
                 {
                     title: "小双",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if (a < 5 && (b === 0 || b === 2 || b === 4 || b === 6 || b === 8)) {
                             return (
-                                <div className="">小双</div>
+                                <div className="po_bag_word">小双</div>
                             )
                         }
                     }
                 },
                 {
                     title: "单大",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if ((a === 1 || a === 3 || a === 5 || a === 7 || a === 9) && b >= 5) {
                             return (
-                                <div className="">单大</div>
+                                <div className="po_bag_word">单大</div>
                             )
                         }
                     }
                 },
                 {
                     title: "单小",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if ((a === 1 || a === 3 || a === 5 || a === 7 || a === 9) && b < 5) {
                             return (
-                                <div className="">单小</div>
+                                <div className="po_bag_word">单小</div>
                             )
                         }
                     }
                 },
                 {
                     title: "单单",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if ((a === 1 || a === 3 || a === 5 || a === 7 || a === 9) && (b === 1 || b === 3 || b === 5 || b === 7 || b === 9)) {
                             return (
-                                <div className="">单单</div>
+                                <div className="po_bag_word">单单</div>
                             )
                         }
                     }
                 },
                 {
                     title: "单双",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if ((a === 1 || a === 3 || a === 5 || a === 7 || a === 9) && (b === 0 || b === 2 || b === 4 || b === 6 || b === 8)) {
                             return (
-                                <div className="">单双</div>
+                                <div className="po_bag_word">单双</div>
                             )
                         }
                     }
                 },
                 {
                     title: "双大",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if ((a === 0 || a === 2 || a === 4 || a === 6 || a === 8) && b >= 5) {
                             return (
-                                <div className="">双大</div>
+                                <div className="po_bag_word">双大</div>
                             )
                         }
                     }
                 },
                 {
                     title: "双小",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if ((a === 0 || a === 2 || a === 4 || a === 6 || a === 8) && b < 5) {
                             return (
-                                <div className="">双小</div>
+                                <div className="po_bag_word">双小</div>
                             )
                         }
                     }
                 },
                 {
                     title: "双单",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if ((a === 0 || a === 2 || a === 4 || a === 6 || a === 8) && (b === 1 || b === 3 || b === 5 || b === 7 || b === 9)) {
                             return (
-                                <div className="">双单</div>
+                                <div className="po_bag_word">双单</div>
                             )
                         }
                     }
                 },
                 {
                     title: "双双",
+                    className: "po_bag",
                     dataIndex: "h",
                     render: text => {
                         let a = Number(text[0])
                         let b = Number(text[1])
                         if ((a === 0 || a === 2 || a === 4 || a === 6 || a === 8) && (b === 0 || b === 2 || b === 4 || b === 6 || b === 8)) {
                             return (
-                                <div className="">双双</div>
+                                <div className="po_bag_word">双双</div>
                             )
                         }
                     }
@@ -2058,7 +2182,7 @@ class Trend extends Component {
     ]
 
     render() {
-        const { loading, loading1, dataSource, h, m, s, nextPeriods, lastPeriods, lastTime, lastResult, newData } = this.state
+        const { loading, loading1, dataSource, h, m, s, nextPeriods, lastPeriods, lastTime, lastResult, newData, columnsIndex, tableStr } = this.state
 
 
         const columns = [
@@ -2528,7 +2652,7 @@ class Trend extends Component {
                             </Select> */}
                             </div>
                             <div>
-                                <Button ghost size="large" style={{ width: "100px", height: "50px" }} onClick={this.buy}>充值</Button>
+                                <Button ghost size="large" style={{ width: "100px", height: "50px" }} onClick={this.openBuy}>充值</Button>
                                 <Button ghost type="link" style={{ width: "100px", height: "100%" }} onClick={this.search}>
                                     <SearchOutlined color="#fff" style={{ fontSize: "xx-large", lineHeight: "" }} />
 
@@ -2559,10 +2683,6 @@ class Trend extends Component {
                                     )
                                 })
                             }
-                            {/* <div className="prizeBall">1</div>
-                            <div className="prizeBall">1</div>
-                            <div className="prizeBall">1</div>
-                            <div className="prizeBall">1</div> */}
                             <div>开奖时间：
                             <span style={{ margin: "0 10px" }}>{lastTime.slice(0, 16)}</span>
 
@@ -2572,29 +2692,76 @@ class Trend extends Component {
                         <div style={{ padding: "0 40px", zIndex: 999 }}>
                             <div style={{ display: "flex", justifyContent: "space-between", height: "80px", lineHeight: "80px" }}>
                                 <div className="firstWord">定位</div>
-                                <Button onClick={() => this.creataData(0)} style={{ fontSize: "xx-large", height: "80px" }} type="link">万位</Button>
+                                <Button
+                                    onClick={() => this.creataData(0)}
+                                    style={{ fontSize: "xx-large", height: "80px" }}
+                                    type="link"
+                                    danger={columnsIndex === 0 && tableStr === "万" ? true : false}
+                                >
+                                    万位</Button>
                                 <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <Button onClick={() => this.creataData(1)} style={{ fontSize: "xx-large", height: "80px" }} type="link">千位</Button>
+                                <Button
+                                    onClick={() => this.creataData(1)}
+                                    style={{ fontSize: "xx-large", height: "80px" }}
+                                    type="link"
+                                    danger={columnsIndex === 0 && tableStr === "千" ? true : false}
+                                >千位</Button>
                                 <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <Button onClick={() => this.creataData(2)} style={{ fontSize: "xx-large", height: "80px" }} type="link">百位</Button>
+                                <Button
+                                    onClick={() => this.creataData(2)}
+                                    style={{ fontSize: "xx-large", height: "80px" }}
+                                    type="link"
+                                    danger={columnsIndex === 0 && tableStr === "百" ? true : false}
+                                >百位</Button>
                                 <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <Button onClick={() => this.creataData(3)} style={{ fontSize: "xx-large", height: "80px" }} type="link">十位</Button>
+                                <Button
+                                    onClick={() => this.creataData(3)}
+                                    style={{ fontSize: "xx-large", height: "80px" }}
+                                    type="link"
+                                    danger={columnsIndex === 0 && tableStr === "十" ? true : false}
+                                >十位</Button>
                                 <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <Button onClick={() => this.creataData(4)} style={{ fontSize: "xx-large", height: "80px" }} type="link">个位</Button>
+                                <Button
+                                    onClick={() => this.creataData(4)}
+                                    style={{ fontSize: "xx-large", height: "80px" }}
+                                    type="link"
+                                    danger={columnsIndex === 0 && tableStr === "个" ? true : false}
+                                >个位</Button>
                                 <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <Button onClick={() => this.creataBMData(6)} style={{ fontSize: "xx-large", height: "80px" }} type="link">大小单双</Button>
+                                <Button
+                                    onClick={() => this.creataBMData(6)}
+                                    style={{ fontSize: "xx-large", height: "80px" }}
+                                    type="link"
+                                    danger={columnsIndex === 6 ? true : false}
+                                >大小单双</Button>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between", height: "80px", lineHeight: "80px", margin: "20px 0" }}>
                                 <div className="firstWord">其他</div>
-                                <Button onClick={() => this.changeTable(1)} style={{ fontSize: "xx-large", height: "80px" }} type="link">五星走势</Button>
+                                <Button onClick={() => this.changeTable(1)}
+                                    style={{ fontSize: "xx-large", height: "80px" }}
+                                    type="link"
+                                    danger={columnsIndex === 1 ? true : false}>五星走势</Button>
                                 <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <Button onClick={() => this.changeTable(2)} style={{ fontSize: "xx-large", height: "80px" }} type="link">五星综合</Button>
+                                <Button
+                                    onClick={() => this.changeTable(2)}
+                                    style={{ fontSize: "xx-large", height: "80px" }}
+                                    type="link"
+                                    danger={columnsIndex === 2 ? true : false}>五星综合</Button>
                                 <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <Button onClick={() => this.changeTable(3)} style={{ fontSize: "xx-large", height: "80px" }} type="link">大小</Button>
+                                <Button
+                                    // onClick={() => this.changeTable(3)}
+                                    style={{ fontSize: "xx-large", height: "80px" }}
+                                    type="link">大小</Button>
                                 <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <Button onClick={() => this.changeTable(4)} style={{ fontSize: "xx-large", height: "80px" }} type="link">单双</Button>
+                                <Button
+                                    // onClick={() => this.changeTable(4)}
+                                    style={{ fontSize: "xx-large", height: "80px" }}
+                                    type="link">单双</Button>
                                 <Divider type="vertical" style={{ height: "40px", margin: "25px 0", background: "#ccc" }} />
-                                <Button onClick={() => this.changeTable(5)} style={{ fontSize: "xx-large", height: "80px" }} type="link">龙虎</Button>
+                                <Button
+                                    // onClick={() => this.changeTable(5)}
+                                    style={{ fontSize: "xx-large", height: "80px" }}
+                                    type="link">龙虎</Button>
                             </div>
                         </div>
                         <Content style={{ padding: "" }}>
@@ -2674,7 +2841,9 @@ class Trend extends Component {
                                                 className="trendImg"
                                                 src={item.img}
                                                 shape="square"
-                                                alt={item.name}>
+                                                alt={item.name}
+                                                onClick={() => this.changeTableData(item.id)}
+                                            >
 
                                             </Avatar >
                                             <div style={{ textAlign: "center", width: "110px", fontSize: "large" }}>{item.type}</div>
@@ -2688,6 +2857,18 @@ class Trend extends Component {
                         <div></div>
                     </Modal>
 
+                    <Modal
+                        // title="实时彩类"
+                        visible={this.state.buyVisible}
+                        onOk={this.buy}
+                        onCancel={this.handleCancel1}
+                        // footer={false}
+                        okText="确定"
+                        cancelText="取消"
+                        className="trendSort"
+                    >
+                        <Input style={{ margin: "30px 0" }} onChange={e => this.cardChange(e)} />
+                    </Modal>
                 </div>
             </Spin>
         );
