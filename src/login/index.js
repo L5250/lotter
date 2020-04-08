@@ -32,8 +32,9 @@ export default class Login extends Component {
             .then(res => {
                 if (res.data.code === 1) {
                     message.success(res.data.msg)
-                    console.log('res=>', res);
                     cookie.save('name', res.data.user_info.name)
+
+                    // console.log('res=>', res);
                     // localStorage.setItem("name", res.data.user_info.name)
                     // localStorage.setItem("id", res.data.user_info.id)
                     // window.location.href = "/"
@@ -90,7 +91,8 @@ export default class Login extends Component {
                             <Button type="primary" onClick={this.onSubmit} htmlType="submit">登录</Button>
                         </Form.Item>
                     </Form>
-                    <Button type="link" style={{ textAlign: "right", width: "100%" }} onClick={() => { this.props.history.push('/logon') }} >没有账号，去注册</Button>
+                    <Button type="link" style={{ textAlign: "left", width: "50%" }} onClick={() => { this.props.history.push('/') }} >暂不登录</Button>
+                    <Button type="link" style={{ textAlign: "right", width: "50%" }} onClick={() => { this.props.history.push('/logon') }} >没有账号，去注册</Button>
 
                 </div>
             </Spin>
