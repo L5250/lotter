@@ -45,6 +45,7 @@ class Trend extends Component {
         id: "",
 
         isTime: true,
+        trendName: "",
 
     }
     componentDidMount() {
@@ -68,7 +69,8 @@ class Trend extends Component {
                     })
                     if (res.data.data[0]) {
                         this.setState({
-                            id: res.data.data[0].id
+                            id: res.data.data[0].id,
+                            trendName: res.data.data[0].type,
                         })
                         this.getTableData(res.data.data[0].id)
 
@@ -141,7 +143,7 @@ class Trend extends Component {
     }
 
     //切换彩种
-    changeTableData = (id) => {
+    changeTableData = (id,type) => {
         this.setState({
             loading: true,
             visible: false,
@@ -153,7 +155,8 @@ class Trend extends Component {
             m: "00",
             s: "00",
             isTime: false,
-            id
+            id,
+            trendName:type,
         })
         this.clearSvg()
         axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
@@ -176,7 +179,7 @@ class Trend extends Component {
                         // this.clearSvg()
 
                         let dataSource = res.data.data
-                        console.log(dataSource);
+                        // console.log(dataSource);
 
                         let newData = []
                         for (let i = 0; i < dataSource.length; i++) {
@@ -201,6 +204,13 @@ class Trend extends Component {
                             this.createSVG()
                             this.countTime(res.data.next[1])
                         }, 500);
+                        if (res.data.data[0]) {
+                            this.setState({
+                                lastPeriods: res.data.data[0].q,
+                                lastTime: res.data.data[0].s,
+                                lastResult: res.data.data[0].h.split(","),
+                            })
+                        }
                     }
                 })
         })
@@ -2195,7 +2205,7 @@ class Trend extends Component {
     ]
 
     render() {
-        const { loading, loading1, dataSource, h, m, s, nextPeriods, lastPeriods, lastTime, lastResult, newData, columnsIndex, tableStr } = this.state
+        const { loading, loading1, trendName, h, m, s, nextPeriods, lastPeriods, lastTime, lastResult, newData, columnsIndex, tableStr } = this.state
 
 
         const columns = [
@@ -2651,7 +2661,7 @@ class Trend extends Component {
                                 <Button
                                     onClick={this.openModal}
                                     style={{ width: "200px", height: "50px", fontSize: "xx-large" }} type="link" ghost>
-                                    腾讯十分彩 <CaretDownOutlined style={{ color: "#fff", fontSize: "xx-large", marginTop: "-10px" }} />
+                                    {trendName} <CaretDownOutlined style={{ color: "#fff", fontSize: "xx-large", marginTop: "-10px" }} />
                                 </Button>
                                 {/* <Select
                                 defaultValue="1"
@@ -2858,7 +2868,7 @@ class Trend extends Component {
                                                 src={item.img}
                                                 shape="square"
                                                 alt={item.name}
-                                                onClick={() => this.changeTableData(item.id)}
+                                                onClick={() => this.changeTableData(item.id,item.type)}
                                             >
 
                                             </Avatar >
