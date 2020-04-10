@@ -427,7 +427,7 @@ class Trend extends Component {
                     })
                     let time1 = setInterval(() => {
                         axios.get(`http://t.f293.cn/api/get_data?id=${this.state.id}`).then(res => {
-                            console.log(res);
+                            // console.log(res);
                             if (res.data.code === 1 && res.data.next[1] != nextDate) {
                                 clearInterval(time1)
                                 this.changeTableData(this.state.id, this.state.trendName)
@@ -516,8 +516,8 @@ class Trend extends Component {
         let ball_9Arr = document.getElementsByClassName('ball_9');
         for (let i = 0; i < ball_9Arr.length; i++) {
             // console.log(ball_9Arr[i].offsetParent.offsetParent.offsetParent.offsetLeft)
-            // console.log(this.getPosition(ball_9Arr[i], 'left'));
-            // console.log(this.getPosition(ball_9Arr[i], 'top'));
+            console.log(this.getPosition(ball_9Arr[i], 'left'));
+            console.log(this.getPosition(ball_9Arr[i], 'top'));
             let arrb = [];
             arrb.push(this.getPosition(ball_9Arr[i], 'left'));
             arrb.push(this.getPosition(ball_9Arr[i], 'top'));
@@ -691,7 +691,7 @@ class Trend extends Component {
             current = current.offsetParent;
         }
         // console.log(actualLeft + (element[offsetWH] / 2));
-        return actualLeft + (element[offsetWH] / 2);
+        return (actualLeft + (element[offsetWH] / 2)) + 4;
     }
 
     search = () => {
