@@ -143,7 +143,7 @@ class Trend extends Component {
     }
 
     //切换彩种
-    changeTableData = (id,type) => {
+    changeTableData = (id, type) => {
         this.setState({
             loading: true,
             visible: false,
@@ -156,14 +156,14 @@ class Trend extends Component {
             s: "00",
             isTime: false,
             id,
-            trendName:type,
+            trendName: type,
         })
         this.clearSvg()
         axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
             axios.get(`http://t.f293.cn/api/get_data?id=${id}`)
                 .then(res => {
                     if (res.data.code === 1) {
-                        console.log(res.data);
+                        // console.log(res.data);
                         this.setState({
                             loading: true,
                             dataSource: res.data.data,
@@ -203,7 +203,9 @@ class Trend extends Component {
                         setTimeout(() => {
                             this.createSVG()
                             this.countTime(res.data.next[1])
+
                         }, 500);
+
                         if (res.data.data[0]) {
                             this.setState({
                                 lastPeriods: res.data.data[0].q,
@@ -380,7 +382,8 @@ class Trend extends Component {
     //开奖时间倒计时
     countTime = (nextDate) => {
         //设置截止时间  
-        let str = nextDate;
+        let str = nextDate.replace(/-/g, "/");
+        // let str = "2020-04-10 11:44:20"
         let endDate = new Date(str);
         let end = endDate.getTime();
         // console.log(end);
@@ -404,22 +407,45 @@ class Trend extends Component {
 
                     })
                 }
-                if (h == 0 && m == 0 && s == 0) {
-                    this.clearSvg()
-                }
+
                 this.setState({
                     h: h < 10 ? "0" + h : h,
                     s: s < 10 ? "0" + s : s,
                     m: m < 10 ? "0" + m : m,
                 })
-                setTimeout(() => {
+                let time = setTimeout(() => {
                     this.countTime(nextDate)
                 }, 100);
+                // let time = setInterval(() => {
+                //     this.countTime(nextDate)
+                // }, 100);
+                if (h == 0 && m == 0 && s == 0) {
+                    this.clearSvg()
+                    clearTimeout(time)
+                    this.setState({
+                        loading: true
+                    })
+                    let time1 = setInterval(() => {
+                        axios.get(`http://t.f293.cn/api/get_data?id=${this.state.id}`).then(res => {
+                            console.log(res);
+                            if (res.data.code === 1 && res.data.next[1] != nextDate) {
+                                clearInterval(time1)
+                                this.changeTableData(this.state.id, this.state.trendName)
+                            } else {
+                                // message.warning(res.data.msg)
+                                axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
+
+                                })
+                            }
+                        })
+                    }, 1000);
+
+                }
                 // console.log(h, m, s);
             } else {
-                setTimeout(() => {
-                    this.changeTableData(this.state.id)
-                }, 3000);
+                // setTimeout(() => {
+                //     this.changeTableData(this.state.id)
+                // }, 3000);
                 // this.props.history.push('/')
 
             }
@@ -2868,7 +2894,7 @@ class Trend extends Component {
                                                 src={item.img}
                                                 shape="square"
                                                 alt={item.name}
-                                                onClick={() => this.changeTableData(item.id,item.type)}
+                                                onClick={() => this.changeTableData(item.id, item.type)}
                                             >
 
                                             </Avatar >
