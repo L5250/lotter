@@ -430,6 +430,7 @@ class Trend extends Component {
                             // console.log(res);
                             if (res.data.code === 1 && res.data.next[1] != nextDate) {
                                 clearInterval(time1)
+                                this.clearSvg()
                                 this.changeTableData(this.state.id, this.state.trendName)
                             } else {
                                 // message.warning(res.data.msg)
@@ -478,6 +479,7 @@ class Trend extends Component {
     //清除SVG
     clearSvg = () => {
         let svg = document.getElementById("chart_svg")
+        console.log(svg.hasChildNodes());
         if (svg.hasChildNodes()) {
             svg.removeChild(svg.lastChild);
         }
@@ -516,14 +518,45 @@ class Trend extends Component {
         let ball_9Arr = document.getElementsByClassName('ball_9');
         for (let i = 0; i < ball_9Arr.length; i++) {
             // console.log(ball_9Arr[i].offsetParent.offsetParent.offsetParent.offsetLeft)
-            console.log(this.getPosition(ball_9Arr[i], 'left'));
-            console.log(this.getPosition(ball_9Arr[i], 'top'));
+            // console.log(this.getPosition(ball_9Arr[i], 'left'));
+            // console.log(this.getPosition(ball_9Arr[i], 'top'));
             let arrb = [];
             arrb.push(this.getPosition(ball_9Arr[i], 'left'));
             arrb.push(this.getPosition(ball_9Arr[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
+        for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 4
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 4
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 10
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 10
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 10
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
     }
     //个位形态分布
     //大小
@@ -537,7 +570,37 @@ class Trend extends Component {
             arrb.push(this.getPosition(shape[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(248, 99, 0)' });
+        for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 4
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 8
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 10
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 10
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 10
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(248, 99, 0)' });
     }
     //奇偶
     svgTable1a = () => {
@@ -550,7 +613,37 @@ class Trend extends Component {
             arrb.push(this.getPosition(parity[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(42, 82, 127)' });
+        for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 4
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 8
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 10
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 10
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 10
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(42, 82, 127)' });
     }
     //质和
     svgTable1b = () => {
@@ -563,7 +656,37 @@ class Trend extends Component {
             arrb.push(this.getPosition(prime[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(105, 131, 83)' });
+        for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 4
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 8
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 10
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 10
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 10
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(105, 131, 83)' });
     }
     //
     //个位012路
@@ -577,7 +700,37 @@ class Trend extends Component {
             arrb.push(this.getPosition(bit[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(0, 135, 34)' });
+        for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 8
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 8
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 10
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 10
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 10
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(0, 135, 34)' });
     }
     // 个位生平降
     svgTable3 = () => {
@@ -590,7 +743,37 @@ class Trend extends Component {
             arrb.push(this.getPosition(lifting[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(248, 99, 0)' });
+        for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 8
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 8
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 10
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 10
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 10
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(248, 99, 0)' });
     }
     //个位振幅
     svgTable4 = () => {
@@ -603,7 +786,37 @@ class Trend extends Component {
             arrb.push(this.getPosition(amplitude[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(30, 136, 238)' });
+        for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 4
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 8
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 10
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 10
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 10
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(30, 136, 238)' });
     }
 
 
@@ -620,7 +833,37 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_1[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
+        for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 4
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 4
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 6
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 6
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 6
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
     }
     //千
     svgTableFive1 = () => {
@@ -633,7 +876,37 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_2[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(104, 53, 53)' });
+         for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 4
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 4
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 6
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 6
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 6
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(104, 53, 53)' });
     }
     //百
     svgTableFive2 = () => {
@@ -646,7 +919,37 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_3[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
+         for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 4
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 4
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 6
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 6
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 6
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
     }
     //十
     svgTableFive3 = () => {
@@ -659,7 +962,37 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_4[i], 'top'));
             arr.push(arrb);
         }
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(104, 53, 53)' });
+         for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 4
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 4
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 6
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 6
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 6
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(104, 53, 53)' });
     }
     //个
     svgTableFive4 = () => {
@@ -673,7 +1006,37 @@ class Trend extends Component {
             arr.push(arrb);
         }
         // console.log(arr);
-        draw.polyline(arr).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
+         for (let i = 1; i < arr.length; i++) {
+            let item = arr[i - 1]
+            let item1 = arr[i]
+
+            let x = item[0]
+            let y = item[1]
+            let x1 = item1[0]
+            let y1 = item1[1]
+            if (x1 < x) {
+                x = x - 4
+                y = y - 4
+            } else if (x1 > x) {
+                x = x + 4
+                y = y + 4
+            } else {
+                y = y + 8
+            }
+
+            if (x1 < x) {
+                x1 = x1 + 6
+                y1 = y1 - 5
+            } else if (x1 > x) {
+                x1 = x1 - 6
+                y1 = y1 - 5
+            } else {
+                y1 = y1 - 6
+            }
+            item[0] = "M" + (x) + " " + (y)
+            item[1] = "L" + (x1) + " " + (y1)
+        }
+        draw.path(arr.toString()).fill('none').stroke({ width: 1, color: 'rgb(204, 0, 0)' });
     }
 
     getPosition = (element, name) => {
@@ -690,8 +1053,7 @@ class Trend extends Component {
             actualLeft += current[offset];
             current = current.offsetParent;
         }
-        // console.log(actualLeft + (element[offsetWH] / 2));
-        return (actualLeft + (element[offsetWH] / 2)) + 4;
+        return (actualLeft + (element[offsetWH] / 2));
     }
 
     search = () => {
