@@ -9,6 +9,17 @@ import axios from 'axios';
 import SVG from "svg.js"
 import './index.scss'
 
+
+// var script = document.createElement('script');
+// script.type = 'text/javascript';
+// script.async = true;
+// script.src = '../../config.js';
+// document.head.appendChild(script);
+
+let a = require("../../config")
+console.log(a)
+const colud = a.default
+// const colud = "http://t.f293.cn"
 const { Option } = Select;
 const { Header, Footer, Sider, Content } = Layout;
 class Trend extends Component {
@@ -60,7 +71,7 @@ class Trend extends Component {
         this.setState({
             loading1: true
         })
-        axios.post(`http://t.f293.cn/api/list`)
+        axios.post(`${colud}/api/list`)
             .then(res => {
                 if (res.data.code === 1) {
                     this.setState({
@@ -89,8 +100,8 @@ class Trend extends Component {
             id
         })
         this.clearSvg()
-        axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
-            axios.get(`http://t.f293.cn/api/get_data?id=${id}`)
+        axios.get(`${colud}/api/ins_data`).then(res => {
+            axios.get(`${colud}/api/get_data?id=${id}`)
                 .then(res => {
                     if (res.data.code === 1) {
 
@@ -159,8 +170,8 @@ class Trend extends Component {
             trendName: type,
         })
         this.clearSvg()
-        axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
-            axios.get(`http://t.f293.cn/api/get_data?id=${id}`)
+        axios.get(`${colud}/api/ins_data`).then(res => {
+            axios.get(`${colud}/api/get_data?id=${id}`)
                 .then(res => {
                     if (res.data.code === 1) {
                         // console.log(res.data);
@@ -223,7 +234,7 @@ class Trend extends Component {
         const { card } = this.state
         let name = cookie.loadAll().name
         if (name) {
-            axios.post(`http://t.f293.cn/api/buy`, { name, card }).then(res => {
+            axios.post(`${colud}/api/buy`, { name, card }).then(res => {
                 if (res.data.code === 1) {
                     message.success("充值成功")
                 } else {
@@ -403,7 +414,7 @@ class Trend extends Component {
                 m = Math.floor(leftTime / 1000 / 60 % 60);
                 s = Math.floor(leftTime / 1000 % 60);
                 if (h == 0 && m == 0 && s == 3) {
-                    axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
+                    axios.get(`${colud}/api/ins_data`).then(res => {
 
                     })
                 }
@@ -426,7 +437,7 @@ class Trend extends Component {
                         loading: true
                     })
                     let time1 = setInterval(() => {
-                        axios.get(`http://t.f293.cn/api/get_data?id=${this.state.id}`).then(res => {
+                        axios.get(`${colud}/api/get_data?id=${this.state.id}`).then(res => {
                             // console.log(res);
                             if (res.data.code === 1 && res.data.next[1] != nextDate) {
                                 clearInterval(time1)
@@ -434,7 +445,7 @@ class Trend extends Component {
                                 this.changeTableData(this.state.id, this.state.trendName)
                             } else {
                                 // message.warning(res.data.msg)
-                                axios.get(`http://t.f293.cn/api/ins_data`).then(res => {
+                                axios.get(`${colud}/api/ins_data`).then(res => {
 
                                 })
                             }
@@ -876,7 +887,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_2[i], 'top'));
             arr.push(arrb);
         }
-         for (let i = 1; i < arr.length; i++) {
+        for (let i = 1; i < arr.length; i++) {
             let item = arr[i - 1]
             let item1 = arr[i]
 
@@ -919,7 +930,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_3[i], 'top'));
             arr.push(arrb);
         }
-         for (let i = 1; i < arr.length; i++) {
+        for (let i = 1; i < arr.length; i++) {
             let item = arr[i - 1]
             let item1 = arr[i]
 
@@ -962,7 +973,7 @@ class Trend extends Component {
             arrb.push(this.getPosition(ball_4[i], 'top'));
             arr.push(arrb);
         }
-         for (let i = 1; i < arr.length; i++) {
+        for (let i = 1; i < arr.length; i++) {
             let item = arr[i - 1]
             let item1 = arr[i]
 
@@ -1006,7 +1017,7 @@ class Trend extends Component {
             arr.push(arrb);
         }
         // console.log(arr);
-         for (let i = 1; i < arr.length; i++) {
+        for (let i = 1; i < arr.length; i++) {
             let item = arr[i - 1]
             let item1 = arr[i]
 
