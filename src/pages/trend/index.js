@@ -10,16 +10,10 @@ import SVG from "svg.js"
 import './index.scss'
 
 
-// var script = document.createElement('script');
-// script.type = 'text/javascript';
-// script.async = true;
-// script.src = '../../config.js';
-// document.head.appendChild(script);
+// const colud = "http://47.92.106.226/"
+const colud = window.api
+// console.log(window.api);
 
-let a = require("../../config")
-console.log(a)
-const colud = a.default
-// const colud = "http://t.f293.cn"
 const { Option } = Select;
 const { Header, Footer, Sider, Content } = Layout;
 class Trend extends Component {
@@ -490,7 +484,7 @@ class Trend extends Component {
     //清除SVG
     clearSvg = () => {
         let svg = document.getElementById("chart_svg")
-        console.log(svg.hasChildNodes());
+        // console.log(svg.hasChildNodes());
         if (svg.hasChildNodes()) {
             svg.removeChild(svg.lastChild);
         }
